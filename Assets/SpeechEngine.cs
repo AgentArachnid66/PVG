@@ -36,20 +36,20 @@ public class SpeechEngine : MonoBehaviour
 
         switch (word)
         {
-            case "engage thrusters":
-                customEvents.engageThrusters.Invoke();
+            case "clear":
+                customEvents.switchMode.Invoke(Mode.None, false);
                 break;
 
-            case "disengage thrusters":
-                customEvents.disengageThrusters.Invoke();
+            case "thrusters":
+                customEvents.switchMode.Invoke(Mode.Thruster, false);
                 break;
 
             case "hand":
-                customEvents.hand.Invoke();
+                customEvents.switchMode.Invoke(Mode.Hand, false);
                 break;
 
             case "weapon":
-                customEvents.weapon.Invoke();
+                customEvents.switchMode.Invoke(Mode.Weapon, false);
                 break;
         }
     }

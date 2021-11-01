@@ -4,6 +4,8 @@ using UnityEngine;
 using UnityEngine.Events;
 
 
+
+
 public class CustomEvents : MonoBehaviour
 {
     public UnityEvent engageThrusters = new UnityEvent();
@@ -14,5 +16,102 @@ public class CustomEvents : MonoBehaviour
 
     public UnityEvent weapon = new UnityEvent();
 
+    public UnityEventBool toggleThrusters = new UnityEventBool();
+
+    public UnityEventMode switchMode = new UnityEventMode();
+
+    public UnityEventInt AddScore = new UnityEventInt();
+
+
+    public bool test;
+
+    [ContextMenu("Test Toggle Thrusters")]
+    public void TestToggle()
+    {
+        toggleThrusters.Invoke(test);
+    }
+
+
+
+    // This is where I will check to see if the player has interacted with any controls
+    void Update()
+    {
+        // Switch to different modes
+        if (Input.GetKeyDown(KeyCode.Keypad1))
+        {
+            Debug.Log("Thrusters");
+            switchMode.Invoke(Mode.Thruster, false);
+        }
+
+        if (Input.GetKeyDown(KeyCode.Keypad0))
+        {
+            Debug.Log("Clear");
+            switchMode.Invoke(Mode.None, false);
+        }
+
+
+        // Use those modes
+        if (Input.GetMouseButtonDown(0))
+        {
+            Debug.Log("Activate Thrusters");
+            toggleThrusters.Invoke(true);
+        }
+        if (Input.GetMouseButtonUp(0))
+        {
+            Debug.Log("Deactivate Thrusters");
+            toggleThrusters.Invoke(false);
+        }
+    }
+}
+  
+
+[System.Serializable]
+public class UnityEventBool : UnityEvent<bool>
+{
+
+}
+
+[System.Serializable]
+public enum Mode
+{
+    None,
+    Thruster,
+    Weapon,
+    Hand
+}
+
+public class UnityEventMode : UnityEvent<Mode, bool>
+{
+    // Mode for the type of equipment is active
+    // the bool is for which hand it is for (not implemented yet)
+}
+
+public class UnityEventInt : UnityEvent<int>
+{
+
+}
+
+
+
+public struct SampleData
+{
+    public CollectableData collectableData;
+    public int points;
+
+    // Add in image at a later date
+}
+
+public struct CollectableData
+{
+    public string name;
+    public int itemID;
+    public int maxStackSize;
+
+}
+
+public struct InventoryData
+{
+    public int item;
+    public int amount;
 
 }
