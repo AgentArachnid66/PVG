@@ -13,7 +13,7 @@ public class Thruster : MonoBehaviour
 
     
     private bool activate;
-
+    public bool overrideActive;
     public bool isActive;
 
 
@@ -32,11 +32,12 @@ public class Thruster : MonoBehaviour
 
     public void UpdateThrusterPower()
     {
-        if (activate && isActive)
+        if ((activate && isActive) || overrideActive)
         {
             // Gets the distance from the thrusters to the main body
-            Vector3 distanceA = thrusterOne.transform.position - transform.position;
-            Vector3 distanceB = thrusterTwo.transform.position - transform.position;
+            Vector3 distanceA = thrusterOne.activeSelf ? thrusterOne.transform.position - transform.position : new Vector3(0f, 0f, 0f);
+
+            Vector3 distanceB = thrusterTwo.activeSelf ? thrusterTwo.transform.position - transform.position : new Vector3(0f, 0f, 0f);
 
 
             // Projects the distance of the thrusters onto the orientation of the thrusters
