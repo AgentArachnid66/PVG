@@ -16,11 +16,18 @@ public class CustomEvents : MonoBehaviour
 
     public UnityEvent weapon = new UnityEvent();
 
+    public UnityEvent shootItem = new UnityEvent();
+
+
+
     public UnityEventBool toggleThrusters = new UnityEventBool();
 
     public UnityEventMode switchMode = new UnityEventMode();
 
     public UnityEventInt AddScore = new UnityEventInt();
+
+    public UnityEventVector3 UpdateHandPosition = new UnityEventVector3();
+
 
 
     public bool test;
@@ -61,6 +68,11 @@ public class CustomEvents : MonoBehaviour
             Debug.Log("Deactivate Thrusters");
             toggleThrusters.Invoke(false);
         }
+        if (Input.GetMouseButtonDown(1))
+        {
+            Debug.Log("Fire Inventory Item");
+            shootItem.Invoke();
+        }
     }
 }
   
@@ -80,6 +92,15 @@ public enum Mode
     Hand
 }
 
+[System.Serializable]
+public enum Hand
+{
+    None,
+    Left,
+    Right,
+    Both
+}
+
 public class UnityEventMode : UnityEvent<Mode, bool>
 {
     // Mode for the type of equipment is active
@@ -91,7 +112,10 @@ public class UnityEventInt : UnityEvent<int>
 
 }
 
+public class UnityEventVector3 : UnityEvent<bool ,Leap.Vector>
+{
 
+}
 
 public struct SampleData
 {
@@ -101,6 +125,7 @@ public struct SampleData
     // Add in image at a later date
 }
 
+[System.Serializable]
 public struct CollectableData
 {
     public string name;
@@ -109,6 +134,7 @@ public struct CollectableData
 
 }
 
+[System.Serializable]
 public struct InventoryData
 {
     public int item;

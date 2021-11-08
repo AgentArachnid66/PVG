@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -167,6 +167,10 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4050235663507654, guid: dae2e2be31c98324eac460f702db97e9, type: 3}
+      propertyPath: m_RootOrder
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4050235663507654, guid: dae2e2be31c98324eac460f702db97e9, type: 3}
       propertyPath: m_LocalPosition.x
       value: 1.1456847
       objectReference: {fileID: 0}
@@ -179,6 +183,10 @@ PrefabInstance:
       value: -7.846763
       objectReference: {fileID: 0}
     - target: {fileID: 4050235663507654, guid: dae2e2be31c98324eac460f702db97e9, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4050235663507654, guid: dae2e2be31c98324eac460f702db97e9, type: 3}
       propertyPath: m_LocalRotation.x
       value: 0
       objectReference: {fileID: 0}
@@ -189,14 +197,6 @@ PrefabInstance:
     - target: {fileID: 4050235663507654, guid: dae2e2be31c98324eac460f702db97e9, type: 3}
       propertyPath: m_LocalRotation.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4050235663507654, guid: dae2e2be31c98324eac460f702db97e9, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4050235663507654, guid: dae2e2be31c98324eac460f702db97e9, type: 3}
-      propertyPath: m_RootOrder
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4050235663507654, guid: dae2e2be31c98324eac460f702db97e9, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -438,6 +438,7 @@ GameObject:
   - component: {fileID: 1054180491}
   - component: {fileID: 1054180490}
   - component: {fileID: 1054180492}
+  - component: {fileID: 1054180493}
   m_Layer: 0
   m_Name: GameObject
   m_TagString: Untagged
@@ -507,6 +508,24 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   test: 0
+--- !u!114 &1054180493
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1054180489}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb7e84252b90a3e4e8b62c1114c2937f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  frame:
+    Id: 0
+    Timestamp: 0
+    CurrentFramesPerSecond: 0
+    Hands: []
+  customEvents: {fileID: 1054180492}
 --- !u!1 &1091917858 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1394407071443026, guid: dae2e2be31c98324eac460f702db97e9,

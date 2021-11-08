@@ -4,19 +4,29 @@ using UnityEngine;
 
 public class Market : MonoBehaviour
 {
-    public List<SampleData> samples = new List<SampleData>();
+
+    // Dictionary that takes in an item ID as a key to access how much each is worth
+
+    public Dictionary<int, int> samples = new Dictionary<int, int>();
+
+
     public CustomEvents customEvents;
 
-
-
-    void DepositSample(SampleData data)
+    public void Start()
     {
+        samples.Add(0, 10);
 
-        if (samples.Contains(data))
+    }
+
+
+
+    public void DepositSample(int itemID)
+    {
+        int value;
+        if (samples.TryGetValue(itemID, out value))
         {
-            SampleData active = samples[data.collectableData.itemID];
 
-            customEvents.AddScore.Invoke(active.points);
+            customEvents.AddScore.Invoke(value);
         }
     }
 

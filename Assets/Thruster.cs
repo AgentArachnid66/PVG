@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class Thruster : MonoBehaviour
 {
-    public GameObject thrusterOne;
-    public GameObject thrusterTwo;
+    public GameObject leftThruster;
+    public GameObject rightThruster;
 
     public float maxPower;
 
@@ -16,6 +16,7 @@ public class Thruster : MonoBehaviour
     public bool overrideActive;
     public bool isActive;
 
+    private Hand hands;
 
     void Start()
     {
@@ -35,14 +36,14 @@ public class Thruster : MonoBehaviour
         if ((activate && isActive) || overrideActive)
         {
             // Gets the distance from the thrusters to the main body
-            Vector3 distanceA = thrusterOne.activeSelf ? thrusterOne.transform.position - transform.position : new Vector3(0f, 0f, 0f);
+            Vector3 distanceA = hands.Equals(Hand.Both) | hands.Equals(Hand.Left) ? leftThruster.transform.position - transform.position : new Vector3(0f, 0f, 0f);
 
-            Vector3 distanceB = thrusterTwo.activeSelf ? thrusterTwo.transform.position - transform.position : new Vector3(0f, 0f, 0f);
+            Vector3 distanceB = hands.Equals(Hand.Both) | hands.Equals(Hand.Right) ? rightThruster.transform.position - transform.position : new Vector3(0f, 0f, 0f);
 
 
             // Projects the distance of the thrusters onto the orientation of the thrusters
-            Vector3 thrusterA = Vector3.Project(distanceA, thrusterOne.transform.up);
-            Vector3 thrusterB = Vector3.Project(distanceB, thrusterTwo.transform.up);
+            Vector3 thrusterA = Vector3.Project(distanceA, leftThruster.transform.up);
+            Vector3 thrusterB = Vector3.Project(distanceB, rightThruster.transform.up);
 
 
             // Sums up the resultant vectors to give me the correct output
