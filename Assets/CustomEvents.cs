@@ -26,7 +26,9 @@ public class CustomEvents : MonoBehaviour
 
     public UnityEventInt AddScore = new UnityEventInt();
 
-    public UnityEventVector3 UpdateHandPosition = new UnityEventVector3();
+    public UnityEventLeapVector UpdateHandPosition = new UnityEventLeapVector();
+
+    public UnityEventLeapTransform UpdateLaser = new UnityEventLeapTransform();
 
 
 
@@ -112,9 +114,14 @@ public class UnityEventInt : UnityEvent<int>
 
 }
 
-public class UnityEventVector3 : UnityEvent<bool ,Leap.Vector>
+public class UnityEventLeapVector : UnityEvent<bool ,Leap.Vector>
 {
 
+}
+
+public class UnityEventLeapTransform : UnityEvent<bool, Transform>
+{
+    
 }
 
 public struct SampleData

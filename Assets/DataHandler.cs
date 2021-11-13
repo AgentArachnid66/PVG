@@ -1,7 +1,9 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Leap;
+using Leap.Unity;
 using LSL;
 
 public class DataHandler : MonoBehaviour
@@ -9,10 +11,11 @@ public class DataHandler : MonoBehaviour
     private Controller controller = new Controller();
 
     public Leap.Frame frame;
-
-
+    public Transform origin;
+    public float radius = 5;
+    
     public CustomEvents customEvents;
-
+   //public 
     public void Update()
     {
         Debug.Log("Controller is " + (controller.IsConnected ? "Connected" : "not Connected"));
@@ -61,13 +64,28 @@ public class DataHandler : MonoBehaviour
 
         foreach(Leap.Hand hand in frame.Hands){
             string id = hand.IsLeft ? "Left Hand Position: " : "Right Hand Position: ";
-            Debug.Log(id + hand.PalmPosition.ToString());
+            //Debug.Log( id + hand.PalmPosition.ToString());
 
             customEvents.UpdateHandPosition.Invoke(hand.IsLeft, hand.PalmPosition);
+//            customEvents.UpdateLaser.Invoke(hand.IsLeft, hand.;
+            Debug.Log(origin.position + hand.PalmPosition.ToVector3());
+            
         }
 
     }
 
+    private void OnDrawGizmos()
+    {
+        
+        foreach (Leap.Hand hand in frame.Hands)
+        {
+            Gizmos.DrawLine(origin.position + hand.PalmPosition.ToUnityVector3(),
+                origin.position + hand.PalmPosition.ToUnityVector3() +
+                (hand.PalmNormal.ToUnityVector3() * 500f));
 
+        }
+        
+        Gizmos.DrawSphere();
+    }
 
 }

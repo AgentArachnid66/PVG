@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -29,7 +30,8 @@ public class Digging : MonoBehaviour
 
     public Transform leftHand;
     public Transform rightHand;
-
+    public Transform rig;
+    public CustomEvents customEvents;
     // The threshold value that if the player exceeds, the laser requires a cooldown before it can be used again
     public float maxBurnout;
 
@@ -46,6 +48,10 @@ public class Digging : MonoBehaviour
     // Bool to determine if the player wants to use 2 different beams or combine them for the more powerful version
     private bool combine;
 
+    private void Start()
+    {
+        
+    }
 
     void UpdateBeam()
     {

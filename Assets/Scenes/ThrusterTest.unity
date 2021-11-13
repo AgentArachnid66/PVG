@@ -504,6 +504,9 @@ MonoBehaviour:
   weapon:
     m_PersistentCalls:
       m_Calls: []
+  shootItem:
+    m_PersistentCalls:
+      m_Calls: []
   toggleThrusters:
     m_PersistentCalls:
       m_Calls: []
@@ -525,6 +528,8 @@ MonoBehaviour:
     Timestamp: 0
     CurrentFramesPerSecond: 0
     Hands: []
+  origin: {fileID: 1233502823}
+  radius: 0.25
   customEvents: {fileID: 1054180492}
 --- !u!1 &1091917858 stripped
 GameObject:
@@ -645,13 +650,13 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1233502819}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f672015f01f53584c93267b0aac93c67, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  thrusterOne: {fileID: 1091917858}
-  thrusterTwo: {fileID: 1160435452}
+  leftThruster: {fileID: 1091917858}
+  rightThruster: {fileID: 1160435452}
   maxPower: 1
   overrideActive: 1
   isActive: 0
@@ -671,6 +676,26 @@ MonoBehaviour:
   customEvents: {fileID: 1054180492}
   menu: {fileID: 1637432972}
   thruster: {fileID: 1233502820}
+  dig: {fileID: 0}
+  inventory:
+  - item: 0
+    amount: 0
+  - item: 0
+    amount: 0
+  - item: 0
+    amount: 0
+  - item: 0
+    amount: 0
+  - item: 0
+    amount: 0
+  ejectionMultiplier: 0
+  test: {fileID: 0}
+--- !u!4 &1233502823 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4050235663507654, guid: dae2e2be31c98324eac460f702db97e9,
+    type: 3}
+  m_PrefabInstance: {fileID: 686638607}
+  m_PrefabAsset: {fileID: 0}
 --- !u!54 &1233502824
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -735,8 +760,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f672015f01f53584c93267b0aac93c67, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  thrusterOne: {fileID: 823014853}
-  thrusterTwo: {fileID: 273132524}
+  leftThruster: {fileID: 0}
+  rightThruster: {fileID: 0}
   maxPower: 0.5
   overrideActive: 0
   isActive: 0
@@ -850,6 +875,20 @@ MonoBehaviour:
   customEvents: {fileID: 1054180492}
   menu: {fileID: 1221305072}
   thruster: {fileID: 1473269249}
+  dig: {fileID: 0}
+  inventory:
+  - item: 0
+    amount: 0
+  - item: 0
+    amount: 0
+  - item: 0
+    amount: 0
+  - item: 0
+    amount: 0
+  - item: 0
+    amount: 0
+  ejectionMultiplier: 0
+  test: {fileID: 0}
 --- !u!1 &1479148618
 GameObject:
   m_ObjectHideFlags: 0

@@ -32,6 +32,10 @@ namespace Leap.Unity {
       return new Vector3(vector.x, vector.y, vector.z);
     }
 
+    public static Vector3 ToUnityVector3(this Vector vector)
+    {
+      return new Vector3(-vector.x, -vector.z, vector.y) / 1000f;
+    }
     /**
     * Converts a Leap Vector object to a UnityEngine Vector4 object.
     *

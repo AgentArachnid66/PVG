@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Leap;
+using Leap.Unity;
 
 public class Player : MonoBehaviour
 {
@@ -9,8 +10,10 @@ public class Player : MonoBehaviour
     public CustomEvents customEvents;
     public GameObject menu;
     public Thruster thruster;
+    public Digging dig;
     [SerializeField]
     public InventoryData[] inventory = new InventoryData[5];
+    
     public float ejectionMultiplier;
     public Rigidbody test;
 
@@ -27,10 +30,11 @@ public class Player : MonoBehaviour
         {
             thruster.ToggleThrusters(result);
         });
-
+        
+        
 
         // Leap Motion
-        //customEvents.UpdateHandPosition.AddListener(LeapUpdateThrusterPosition);
+        customEvents.UpdateHandPosition.AddListener(LeapUpdateThrusterPosition);
 
 
         customEvents.AddScore.AddListener(AddScore);
@@ -93,11 +97,19 @@ public class Player : MonoBehaviour
 
     void LeapUpdateThrusterPosition(bool isLeft, Leap.Vector position)
     {
-        Vector3 unityPosition = new Vector3(position.x, position.y, position.z);
+        Vector3 unityPosition = position.ToUnityVector3();
         GameObject active = isLeft ? thruster.leftThruster : thruster.rightThruster;
 
         active.transform.position = unityPosition;
     }
+
+    void LeapUpdateLaser(bool isLeft, Leap.Vector position)
+    {
+        Vector3 unityPosition = position.ToUnityVector3();
+        //GameObject active
+
+    }
+    
 
     #endregion
 
