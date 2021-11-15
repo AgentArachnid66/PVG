@@ -67,25 +67,16 @@ public class DataHandler : MonoBehaviour
             //Debug.Log( id + hand.PalmPosition.ToString());
 
             customEvents.UpdateHandPosition.Invoke(hand.IsLeft, hand.PalmPosition);
-//            customEvents.UpdateLaser.Invoke(hand.IsLeft, hand.;
+
+            customEvents.UpdateLaser.Invoke(hand.IsLeft, hand.PalmNormal.ToUnityVector3(), hand.PalmPosition.ToUnityVector3());
+
+
             Debug.Log(origin.position + hand.PalmPosition.ToVector3());
             
         }
 
     }
 
-    private void OnDrawGizmos()
-    {
-        
-        foreach (Leap.Hand hand in frame.Hands)
-        {
-            Gizmos.DrawLine(origin.position + hand.PalmPosition.ToUnityVector3(),
-                origin.position + hand.PalmPosition.ToUnityVector3() +
-                (hand.PalmNormal.ToUnityVector3() * 500f));
 
-        }
-        
-        Gizmos.DrawSphere();
-    }
 
 }

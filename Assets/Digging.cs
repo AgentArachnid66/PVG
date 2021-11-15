@@ -28,8 +28,12 @@ public class Digging : MonoBehaviour
      * </summary>
      */
 
-    public Transform leftHand;
-    public Transform rightHand;
+
+
+
+
+    public bool active;
+
     public Transform rig;
     public CustomEvents customEvents;
     // The threshold value that if the player exceeds, the laser requires a cooldown before it can be used again
@@ -41,6 +45,9 @@ public class Digging : MonoBehaviour
     // The vector between the hands, to measure the distance between them and to get the orientation
     private Vector3 handDist;
 
+    private float power;
+
+    private Vector3 laserDir;
 
     // Enum that holds which hands are active in this mode
     private Hand hands;
@@ -48,9 +55,12 @@ public class Digging : MonoBehaviour
     // Bool to determine if the player wants to use 2 different beams or combine them for the more powerful version
     private bool combine;
 
+    private HandData leftHand;
+    private HandData rightHand;
+
     private void Start()
     {
-        
+        customEvents.UpdateLaser.AddListener(UpdateBeamInfo);
     }
 
     void UpdateBeam()
@@ -58,10 +68,59 @@ public class Digging : MonoBehaviour
         // If the hands are facing each other within a threshold, then the beams will combine
         // Otherwise they will act independently
 
-        // Project the beam with falloff
+        // First check if the laser is active
+        if (active)
+        {
+            // Then check if the player has both hands as lasers
+            if (hands == Hand.Both)
+            {
+                // If the dot is close to -1 then the hands are facing each other
+                combine = Vector3.Dot(leftHand.orientation, rightHand.orientation) <= 0.95;
+                if (combine)
+                {
+                    // If we want to combine, then we can calculate the power using the distance between the hands
+                    handDist = leftHand.location - rightHand.location;
+                    power = 1 / handDist.magnitude;
 
-        // If hits a sample, apply damage
+
+                }
+            }
+
+            // If hits a sample, apply damage
+
+        }
     }
- 
 
+    
+    void UpdateBeamInfo(bool isLeft, Vector3 handOrientation, Vector3 handPosition)
+    {
+        if (hands != Hand.None)
+        {
+            if (isLeft)
+            {
+                leftHand.location = handPosition;
+                leftHand.orientation = handOrientation;
+            }
+            else
+            {
+                rightHand.location = handPosition;
+                rightHand.orientation = handOrientation;
+            }
+
+
+
+        }
+        else
+        {
+            active = false;
+        }
+
+        UpdateBeam();
+    }
+
+
+    public void ToggleBeam(Hand hand)
+    {
+        hands = hand;
+    }
 }

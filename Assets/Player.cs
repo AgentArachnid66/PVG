@@ -52,7 +52,7 @@ public class Player : MonoBehaviour
 
     #region Mode Mechanics
 
-    void SwitchMode(Mode mode, bool hand)
+    void SwitchMode(Mode mode, Hand hand)
     {
         thruster.ToggleActive(false);
 
@@ -66,6 +66,7 @@ public class Player : MonoBehaviour
                 break;
 
             case Mode.Weapon:
+                dig.ToggleBeam(hand);
                 break;
 
             case Mode.Hand:
@@ -92,7 +93,6 @@ public class Player : MonoBehaviour
 
     void Weapon()
     {
-        Debug.Log("Weapon");
     }
 
     void LeapUpdateThrusterPosition(bool isLeft, Leap.Vector position)
@@ -103,10 +103,9 @@ public class Player : MonoBehaviour
         active.transform.position = unityPosition;
     }
 
-    void LeapUpdateLaser(bool isLeft, Leap.Vector position)
+    void LeapUpdateLaser()
     {
-        Vector3 unityPosition = position.ToUnityVector3();
-        //GameObject active
+        
 
     }
     
@@ -114,13 +113,6 @@ public class Player : MonoBehaviour
     #endregion
 
     #region Movement
-
-
-
-
-
-
-
 
     #endregion
 

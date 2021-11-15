@@ -28,7 +28,7 @@ public class CustomEvents : MonoBehaviour
 
     public UnityEventLeapVector UpdateHandPosition = new UnityEventLeapVector();
 
-    public UnityEventLeapTransform UpdateLaser = new UnityEventLeapTransform();
+    public UnityEventPosOrient UpdateLaser = new UnityEventPosOrient();
 
 
 
@@ -49,13 +49,13 @@ public class CustomEvents : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Keypad1))
         {
             Debug.Log("Thrusters");
-            switchMode.Invoke(Mode.Thruster, false);
+            switchMode.Invoke(Mode.Thruster, Hand.Left);
         }
 
         if (Input.GetKeyDown(KeyCode.Keypad0))
         {
             Debug.Log("Clear");
-            switchMode.Invoke(Mode.None, false);
+            switchMode.Invoke(Mode.None, Hand.Both);
         }
 
 
@@ -103,7 +103,7 @@ public enum Hand
     Both
 }
 
-public class UnityEventMode : UnityEvent<Mode, bool>
+public class UnityEventMode : UnityEvent<Mode, Hand>
 {
     // Mode for the type of equipment is active
     // the bool is for which hand it is for (not implemented yet)
@@ -114,21 +114,25 @@ public class UnityEventInt : UnityEvent<int>
 
 }
 
-public class UnityEventLeapVector : UnityEvent<bool ,Leap.Vector>
+public class UnityEventLeapVector : UnityEvent<bool, Leap.Vector>
 {
 
 }
 
-public class UnityEventLeapTransform : UnityEvent<bool, Transform>
+public class UnityEventVector3 : UnityEvent<bool, Vector3>
 {
-    
+
+}
+
+public class UnityEventPosOrient : UnityEvent<bool, Vector3, Vector3>
+{
 }
 
 public struct SampleData
 {
     public CollectableData collectableData;
     public int points;
-
+    public float health;
     // Add in image at a later date
 }
 
@@ -147,4 +151,12 @@ public struct InventoryData
     public int item;
     public int amount;
 
+}
+
+[System.Serializable]
+public struct HandData
+{
+    public bool isLeft;
+    public Vector3 location;
+    public Vector3 orientation;
 }
