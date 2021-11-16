@@ -6,6 +6,8 @@ using Leap.Unity;
 
 public class Player : MonoBehaviour
 {
+    private Mode currentMode;
+
     public int points;
     public CustomEvents customEvents;
     public GameObject menu;
@@ -13,7 +15,12 @@ public class Player : MonoBehaviour
     public Digging dig;
     [SerializeField]
     public InventoryData[] inventory = new InventoryData[5];
-    
+
+
+    public float maxCollectionDistance;
+    public float vacuumSpeed;
+    public Transform collectionPoint;
+
     public float ejectionMultiplier;
     public Rigidbody test;
 
@@ -30,15 +37,19 @@ public class Player : MonoBehaviour
         {
             thruster.ToggleThrusters(result);
         });
-        
-        
 
+
+        InvokeRepeating("AddNewVacuumItem", 0, 0.1f);
+        
         // Leap Motion
         customEvents.UpdateHandPosition.AddListener(LeapUpdateThrusterPosition);
 
 
         customEvents.AddScore.AddListener(AddScore);
         customEvents.shootItem.AddListener(ShootItem);
+
+
+
     }
 
 
@@ -47,6 +58,7 @@ public class Player : MonoBehaviour
         // If the dot product of the menu's forward vector and the player's forward vector is above 0.98 then open the menu
         //Debug.Log(Vector3.Dot(menu.transform.forward, transform.forward));
 
+        VacuumItems();
 
     }
 
@@ -54,11 +66,13 @@ public class Player : MonoBehaviour
 
     void SwitchMode(Mode mode, Hand hand)
     {
+        currentMode = mode;
         thruster.ToggleActive(false);
 
         switch (mode)
         {
             case Mode.None:
+                dig.ToggleBeam(global::Hand.None);
                 break;
 
             case Mode.Thruster:
@@ -70,6 +84,9 @@ public class Player : MonoBehaviour
                 break;
 
             case Mode.Hand:
+                break;
+
+            case Mode.Collection:
                 break;
         }
     }
@@ -186,6 +203,7 @@ public class Player : MonoBehaviour
             // Just adds one to the amount of a certain item in the inventory
             inventory[index].amount += 1;
             Debug.Log("Just added " + data.name + " to the inventory");
+            
             return true;
         }
 
@@ -194,8 +212,6 @@ public class Player : MonoBehaviour
             return false;
         }
     }
-
-
     
     // Removes items from the player inventory
     bool RemoveFromInventory(int index, int amount)
@@ -227,6 +243,42 @@ public class Player : MonoBehaviour
 
     }
 
+    // The main way that the player will add items to the Inventory
+    void VacuumItems()
+    {
+        List<GameObject> active = CollectionObjectPool.collectionsInstance.GetActiveObjects();
+        if (active != null && active.Count>=1)
+        {
+            for (int i = 0; i < active.Count; i++)
+            {
+                Vector3 dir = (collectionPoint.transform.position - active[i].transform.position).normalized;
+                active[i].transform.position = active[i].transform.position + (dir * vacuumSpeed);
+
+                if (Vector3.Distance(active[i].transform.position, transform.position) <= 0.5)
+                {
+                    active[i].GetComponent<VacuumObject>().RetrieveObjects(this);
+                }
+            }
+        }
+    }
+
+    [ContextMenu("Add New Vacuum Item")]
+    void AddNewVacuumItem()
+    {
+        if (currentMode == Mode.Collection)
+        {
+            //Debug.Log("Adding new Vacuum Item");
+            GameObject vacuumItem = CollectionObjectPool.collectionsInstance.GetPooledObject();
+            if (vacuumItem != null)
+            {
+                vacuumItem.transform.position = collectionPoint.transform.position + (collectionPoint.transform.forward * maxCollectionDistance);
+                vacuumItem.SetActive(true);
+            }
+        }
+    }
+
+
+    
     #endregion
 
 

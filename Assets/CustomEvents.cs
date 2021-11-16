@@ -52,6 +52,18 @@ public class CustomEvents : MonoBehaviour
             switchMode.Invoke(Mode.Thruster, Hand.Left);
         }
 
+        if (Input.GetKeyDown(KeyCode.Keypad2))
+        {
+            Debug.Log("Laser");
+            switchMode.Invoke(Mode.Weapon, Hand.Both);
+        }
+
+        if (Input.GetKeyDown(KeyCode.Keypad3))
+        {
+            Debug.Log("Collection");
+            switchMode.Invoke(Mode.Collection, Hand.Both);
+        }
+
         if (Input.GetKeyDown(KeyCode.Keypad0))
         {
             Debug.Log("Clear");
@@ -91,7 +103,8 @@ public enum Mode
     None,
     Thruster,
     Weapon,
-    Hand
+    Hand,
+    Collection
 }
 
 [System.Serializable]
@@ -132,7 +145,6 @@ public struct SampleData
 {
     public CollectableData collectableData;
     public int points;
-    public float health;
     // Add in image at a later date
 }
 

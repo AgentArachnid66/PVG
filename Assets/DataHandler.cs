@@ -18,7 +18,7 @@ public class DataHandler : MonoBehaviour
    //public 
     public void Update()
     {
-        Debug.Log("Controller is " + (controller.IsConnected ? "Connected" : "not Connected"));
+        //Debug.Log("Controller is " + (controller.IsConnected ? "Connected" : "not Connected"));
         
         frame = controller.Frame();
         ProcessLeapData();
@@ -71,7 +71,7 @@ public class DataHandler : MonoBehaviour
             customEvents.UpdateLaser.Invoke(hand.IsLeft, hand.PalmNormal.ToUnityVector3(), hand.PalmPosition.ToUnityVector3());
 
 
-            Debug.Log(origin.position + hand.PalmPosition.ToVector3());
+            //Debug.Log(origin.position + hand.PalmPosition.ToVector3());
             
         }
 

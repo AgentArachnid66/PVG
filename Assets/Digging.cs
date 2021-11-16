@@ -45,8 +45,6 @@ public class Digging : MonoBehaviour
     // The vector between the hands, to measure the distance between them and to get the orientation
     private Vector3 handDist;
 
-    private float power;
-
     private Vector3 laserDir;
 
     // Enum that holds which hands are active in this mode
@@ -80,14 +78,25 @@ public class Digging : MonoBehaviour
                 {
                     // If we want to combine, then we can calculate the power using the distance between the hands
                     handDist = leftHand.location - rightHand.location;
-                    power = 1 / handDist.magnitude;
+                    currOutput = 1 / handDist.magnitude;
 
+                    laserDir = ((leftHand.location - rig.position) + (rightHand.location - rig.position)) / 2;
 
                 }
             }
 
             // If hits a sample, apply damage
+            RaycastHit hit;
 
+            if (Physics.Raycast(rig.position, laserDir, out hit))
+            {
+                print("Found an object - distance: " + hit.distance);
+                Sample sample = hit.collider.gameObject.GetComponent<Sample>();
+                if (sample != null)
+                {
+                    sample.TakeDamage(currOutput);
+                }
+            }
         }
     }
 
@@ -121,6 +130,7 @@ public class Digging : MonoBehaviour
 
     public void ToggleBeam(Hand hand)
     {
+        Debug.Log("Toggle Beam: " +hand.ToString());
         hands = hand;
     }
 }

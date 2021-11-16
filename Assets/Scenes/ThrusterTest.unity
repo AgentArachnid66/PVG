@@ -676,7 +676,7 @@ MonoBehaviour:
   customEvents: {fileID: 1054180492}
   menu: {fileID: 1637432972}
   thruster: {fileID: 1233502820}
-  dig: {fileID: 0}
+  dig: {fileID: 1233502822}
   inventory:
   - item: 0
     amount: 0
@@ -690,6 +690,23 @@ MonoBehaviour:
     amount: 0
   ejectionMultiplier: 0
   test: {fileID: 0}
+--- !u!114 &1233502822
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1233502819}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbd9091a3b3fa6248880f3621843e411, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  active: 0
+  rig: {fileID: 1233502823}
+  customEvents: {fileID: 1054180492}
+  maxBurnout: 0
+  currOutput: 0
 --- !u!4 &1233502823 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4050235663507654, guid: dae2e2be31c98324eac460f702db97e9,

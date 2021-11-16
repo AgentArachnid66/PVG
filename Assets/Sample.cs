@@ -1,10 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using System;
 public class Sample : Collectable
 {
 
+    public float health;
 
     void OnCollisionEnter(Collision other)
     {
@@ -22,6 +23,20 @@ public class Sample : Collectable
 
         }
 
+    }
+
+    public void TakeDamage(float damage)
+    {
+        health -= damage;
+        if(health <= 0)
+        {
+            Break();
+        }
+    }
+
+    private void Break()
+    {
+        throw new System.NotImplementedException();
     }
 
 }
