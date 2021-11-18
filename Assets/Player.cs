@@ -7,7 +7,8 @@ using Leap.Unity;
 public class Player : MonoBehaviour
 {
     private Mode currentMode;
-
+    [SerializeField] private CollectionObjectPool objectpoolVacuum;
+    
     public int points;
     public CustomEvents customEvents;
     public GameObject menu;
@@ -35,11 +36,11 @@ public class Player : MonoBehaviour
 
         customEvents.toggleThrusters.AddListener((bool result) =>
         {
-            thruster.ToggleThrusters(result);
+            //thruster.ToggleThrusters(result);
         });
 
 
-        InvokeRepeating("AddNewVacuumItem", 0, 0.1f);
+        InvokeRepeating("AddNewVacuumItem", 0, 0.2f);
         
         // Leap Motion
         customEvents.UpdateHandPosition.AddListener(LeapUpdateThrusterPosition);
@@ -58,7 +59,7 @@ public class Player : MonoBehaviour
         // If the dot product of the menu's forward vector and the player's forward vector is above 0.98 then open the menu
         //Debug.Log(Vector3.Dot(menu.transform.forward, transform.forward));
 
-        VacuumItems();
+        
 
     }
 
@@ -67,7 +68,7 @@ public class Player : MonoBehaviour
     void SwitchMode(Mode mode, Hand hand)
     {
         currentMode = mode;
-        thruster.ToggleActive(false);
+        //thruster.ToggleActive(false);
 
         switch (mode)
         {
@@ -171,20 +172,25 @@ public class Player : MonoBehaviour
             {
                 index = i;
                 found = true;
+                Debug.Log("Saved first empty slot: " +index.ToString());
             }
 
-            // Checks if a stack of the relevant items exists already
-            if (inventory[i].amount > 1 && inventory[i].item == data.itemID)
+            // Checks if a stack of the relevant items exists already inventory[i].amount > 1 && 
+            if (inventory[i].item == data.itemID)
             {
+                Debug.Log("Stack with relevant item at index: " +i.ToString());
+                
                 // Checks to see if there is any space left in the stack
                 if (inventory[i].amount <= data.maxStackSize)
                 {
                     index = i;
                     found = true;
+                    Debug.Log(("Stack with relevant item with space left in stack at index: " +i.ToString()));
                 }
             }
         }
-
+        
+        Debug.Log(("Added to index: " +index.ToString()));
         return index;
     }
 
@@ -196,14 +202,25 @@ public class Player : MonoBehaviour
     // Adds an item to the player inventory
     bool AddToInventory(CollectableData data, int index)
     {
-
+        
+        Debug.Log(inventory[index].amount.ToString() +" in Inventory at slot " +index.ToString());
+        Debug.Log("Max Stack Size for item: " +data.maxStackSize.ToString());
+        
         // Double checks that it's adding to the correct stack, and that the addition won't make the stack overflow
-        if (data.itemID == inventory[index].item && inventory[index].amount <= data.maxStackSize)
+        if (data.itemID == inventory[index].item && inventory[index].amount < data.maxStackSize)
         {
             // Just adds one to the amount of a certain item in the inventory
             inventory[index].amount += 1;
-            Debug.Log("Just added " + data.name + " to the inventory");
+            Debug.Log("Just added " + data.name + " to the inventory in slot: " +index.ToString());
             
+            return true;
+        }
+
+        else if(inventory[index].amount <= 0)
+        {
+            inventory[index].item = data.itemID;
+            inventory[index].amount += 1;
+            Debug.Log("Just added " + data.name + " to the inventory in slot: " +index.ToString());
             return true;
         }
 
@@ -243,37 +260,45 @@ public class Player : MonoBehaviour
 
     }
 
-    // The main way that the player will add items to the Inventory
-    void VacuumItems()
+
+    
+    IEnumerator BeginVacuumItem(GameObject item , Vector3 spawn , float waitTime)
     {
-        List<GameObject> active = CollectionObjectPool.collectionsInstance.GetActiveObjects();
-        if (active != null && active.Count>=1)
+        float elapsedTime = 0;
+        item.transform.position = spawn;
+ 
+        while (elapsedTime < waitTime)
         {
-            for (int i = 0; i < active.Count; i++)
-            {
-                Vector3 dir = (collectionPoint.transform.position - active[i].transform.position).normalized;
-                active[i].transform.position = active[i].transform.position + (dir * vacuumSpeed);
+            Vector3 target = collectionPoint.transform.position;
+            item.transform.position = Vector3.Lerp(spawn, target, (elapsedTime / waitTime));
+            elapsedTime += Time.deltaTime;
+ 
+            // Yield here
+            yield return null;
+        }  
+        // Make sure we got there
+        item.transform.position = collectionPoint.transform.position;
 
-                if (Vector3.Distance(active[i].transform.position, transform.position) <= 0.5)
-                {
-                    active[i].GetComponent<VacuumObject>().RetrieveObjects(this);
-                }
-            }
-        }
+        item.GetComponent<VacuumObject>().RetrieveObjects(this);
+        
+        objectpoolVacuum.ReturnObjectToPool(item);
+        
+        yield return null;
     }
-
+    
+    //
     [ContextMenu("Add New Vacuum Item")]
     void AddNewVacuumItem()
     {
         if (currentMode == Mode.Collection)
         {
             //Debug.Log("Adding new Vacuum Item");
-            GameObject vacuumItem = CollectionObjectPool.collectionsInstance.GetPooledObject();
-            if (vacuumItem != null)
-            {
-                vacuumItem.transform.position = collectionPoint.transform.position + (collectionPoint.transform.forward * maxCollectionDistance);
-                vacuumItem.SetActive(true);
-            }
+            GameObject vacuumItem = objectpoolVacuum.GetObject();
+            StartCoroutine(BeginVacuumItem( vacuumItem,
+                collectionPoint.transform.position + (collectionPoint.transform.forward * maxCollectionDistance),
+                vacuumSpeed));
+           
+            
         }
     }
 

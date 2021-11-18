@@ -4,59 +4,31 @@ using UnityEngine;
 
 public class CollectionObjectPool : MonoBehaviour
 {
-    public static CollectionObjectPool collectionsInstance;
-    public List<GameObject> pooledObjects;
-    public GameObject objectToPool;
-    public int amountToPool;
+    [SerializeField] private GameObject objectToPool;
+    private readonly List<GameObject> inactivePool = new List<GameObject>();
+    private readonly List<GameObject> activePool = new List<GameObject>();
 
-    private void Awake()
+    public GameObject GetObject()
     {
-        collectionsInstance = this;
-    }
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        pooledObjects = new List<GameObject>();
-        GameObject tmp;
-        for (int i = 0; i < amountToPool; i++)
+        GameObject obj = null;
+        if (inactivePool.Count > 0)
         {
-            tmp = Instantiate(objectToPool);
-            tmp.SetActive(false);
-            pooledObjects.Add(tmp);
+            obj = inactivePool[0];
+            inactivePool.RemoveAt(0);
         }
-    }
-
-    public GameObject GetPooledObject()
-    {
-        Debug.Log("Retrieving Pooled Object");
-        for (int i = 0; i < amountToPool; i++)
+        else
         {
-            if (!pooledObjects[i].activeInHierarchy)
-            {
-                return pooledObjects[i];
-            }
+            obj = Instantiate(objectToPool);
+            activePool.Add(obj);
         }
-        return null;
+        obj.SetActive(true);
+        return obj;
     }
 
-    public List<GameObject> GetActiveObjects()
+    public void ReturnObjectToPool(GameObject objectToReturn)
     {
-        List<GameObject> active = new List<GameObject>();
-        for (int i = 0; i < amountToPool; i++)
-        {
-            if (pooledObjects[i].activeInHierarchy)
-            {
-                active.Add(pooledObjects[i]);
-            }
-        }
-
-        return active;
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        objectToReturn.SetActive(false);
+        inactivePool.Add(objectToReturn);
+        activePool.Remove(objectToReturn);
     }
 }

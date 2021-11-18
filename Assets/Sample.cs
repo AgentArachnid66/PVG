@@ -15,6 +15,7 @@ public class Sample : Collectable
         if (player != null)
         {
             player.AddItemToInventory(data);
+            gameObject.SetActive(false);
         }
 
         if(market != null)

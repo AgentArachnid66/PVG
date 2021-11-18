@@ -1,35 +1,38 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Animations;
 
 public class VacuumObject : MonoBehaviour
 {
-    public List<Sample> gatheredObjects = new List<Sample>();
+    public GameObject gatheredObject;
+    private Sample sample;
 
+    private bool hasObject;
+    
+    private void Start()
+    {
+    }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.tag == "Collectable")
+        
+        if (other.gameObject.layer == LayerMask.NameToLayer("Sample") && gatheredObject == null)
         {
-            other.transform.parent = transform;
-            other.attachedRigidbody.isKinematic = false;
-            gatheredObjects.Add(other.gameObject.GetComponent<Sample>());
+            
+            //joint.
+            hasObject = true;
         }
     }
 
-
-
     public void RetrieveObjects(Player player)
     {
-        Debug.Log("Collided with Player");
-        foreach (Sample objects in gatheredObjects)
+        if (hasObject)
         {
-            if (player.AddItemToInventory(objects.data))
-            {
-                objects.transform.parent = null;
-                objects.gameObject.SetActive(false);
-            }
+            player.AddItemToInventory(sample.data);
+            sample = null;
+            hasObject = false;
         }
-        transform.gameObject.SetActive(false);
     }
 }
