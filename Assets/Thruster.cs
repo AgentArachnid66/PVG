@@ -17,7 +17,9 @@ public class Thruster : MonoBehaviour
     public bool isActive;
 
     private Hand hands;
-
+    private Vector3 leftOrigin;
+    private Vector3 rightOrigin;
+    //private Vector3 
     void Start()
     {
         m_Rigidbody = GetComponent<Rigidbody>();
@@ -36,9 +38,18 @@ public class Thruster : MonoBehaviour
         if ((activate && isActive) || overrideActive)
         {
             // Gets the distance from the thrusters to the main body
-            Vector3 distanceA = hands.Equals(Hand.Both) | hands.Equals(Hand.Left) ? leftThruster.transform.position - transform.position : new Vector3(0f, 0f, 0f);
+            //Vector3 distanceA = hands.Equals(Hand.Both) | hands.Equals(Hand.Left) ? leftThruster.transform.position - transform.position : new Vector3(0f, 0f, 0f);
 
-            Vector3 distanceB = hands.Equals(Hand.Both) | hands.Equals(Hand.Right) ? rightThruster.transform.position - transform.position : new Vector3(0f, 0f, 0f);
+            //Vector3 distanceB = hands.Equals(Hand.Both) | hands.Equals(Hand.Right) ? rightThruster.transform.position - transform.position : new Vector3(0f, 0f, 0f);
+
+
+            // NEW METHOD
+
+            // Get the distance from their original positions and use that in the power calculations
+            Vector3 distanceA = hands.Equals(Hand.Both) | hands.Equals(Hand.Left) ? leftThruster.transform.position - leftOrigin : Vector3.zero;
+            Vector3 distanceB = hands.Equals(Hand.Both) | hands.Equals(Hand.Right) ? rightThruster.transform.position - rightOrigin : Vector3.zero;
+        
+
 
 
             // Projects the distance of the thrusters onto the orientation of the thrusters
@@ -47,11 +58,8 @@ public class Thruster : MonoBehaviour
 
 
             // Sums up the resultant vectors to give me the correct output
-            Vector3 result = thrusterA + thrusterB;
-            if (result.magnitude > maxPower)
-            {
-                result = result.normalized * maxPower;
-            }
+            Vector3 result = Vector3.ClampMagnitude((thrusterA + thrusterB), maxPower);
+            
 
             Debug.Log(result);
 

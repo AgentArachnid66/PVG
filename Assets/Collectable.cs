@@ -4,6 +4,6 @@ using UnityEngine;
 
 public class Collectable : MonoBehaviour
 {
-    [SerializeField]
-    public CollectableData data;
+    //[SerializeField]
+    //public CollectableData data;
 }

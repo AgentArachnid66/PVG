@@ -6,6 +6,19 @@ using Leap.Unity;
 
 public class Player : MonoBehaviour
 {
+
+    private static Player playerInstance;
+    public static Player PlayerInstance
+    {
+        get
+        {
+            if (ReferenceEquals(playerInstance, null))
+                playerInstance = GameObject.FindObjectOfType<Player>();
+
+            return playerInstance;
+        }
+    }
+
     private Mode currentMode;
     [SerializeField] private CollectionObjectPool objectpoolVacuum;
     
@@ -14,6 +27,9 @@ public class Player : MonoBehaviour
     public GameObject menu;
     public Thruster thruster;
     public Digging dig;
+
+
+    public Market market;
     [SerializeField]
     public InventoryData[] inventory = new InventoryData[5];
 
@@ -22,7 +38,7 @@ public class Player : MonoBehaviour
     public float vacuumSpeed;
     public Transform collectionPoint;
 
-    public float ejectionMultiplier;
+    public float ejectionMultiplier;  
     public Rigidbody test;
 
     void Start()
@@ -38,16 +54,13 @@ public class Player : MonoBehaviour
         {
             //thruster.ToggleThrusters(result);
         });
-
-
-        InvokeRepeating("AddNewVacuumItem", 0, 0.2f);
         
         // Leap Motion
         customEvents.UpdateHandPosition.AddListener(LeapUpdateThrusterPosition);
 
 
         customEvents.AddScore.AddListener(AddScore);
-        customEvents.shootItem.AddListener(ShootItem);
+        //customEvents.shootItem.AddListener(ShootItem);
 
 
 
@@ -59,7 +72,7 @@ public class Player : MonoBehaviour
         // If the dot product of the menu's forward vector and the player's forward vector is above 0.98 then open the menu
         //Debug.Log(Vector3.Dot(menu.transform.forward, transform.forward));
 
-        
+        customEvents.UpdateLaser.Invoke(true, transform.forward, transform.position);
 
     }
 
@@ -115,7 +128,7 @@ public class Player : MonoBehaviour
 
     void LeapUpdateThrusterPosition(bool isLeft, Leap.Vector position)
     {
-        Vector3 unityPosition = position.ToUnityVector3();
+        Vector3 unityPosition =CustomUtility.LeapVectorToUnityVector3( position);
         GameObject active = isLeft ? thruster.leftThruster : thruster.rightThruster;
 
         active.transform.position = unityPosition;
@@ -151,13 +164,6 @@ public class Player : MonoBehaviour
 
     void OnCollisionEnter(Collision other)
     {
-        Collectable collect = other.gameObject.GetComponent<Collectable>();
-
-
-        if (collect != null)
-        {
-
-        }
     }
 
     // Gets the first available index for an item if there isn't a stack already in the inventory. If there is a stack then it returns that
@@ -176,24 +182,38 @@ public class Player : MonoBehaviour
             }
 
             // Checks if a stack of the relevant items exists already inventory[i].amount > 1 && 
-            if (inventory[i].item == data.itemID)
+            if (inventory[i].item == data.itemID && inventory[i].amount  < data.maxStackSize)
             {
-                Debug.Log("Stack with relevant item at index: " +i.ToString());
+                index = i;
+                found = true;
+                Debug.Log(("Stack with relevant item with space left in stack at index: " +i.ToString()));
                 
-                // Checks to see if there is any space left in the stack
-                if (inventory[i].amount <= data.maxStackSize)
-                {
-                    index = i;
-                    found = true;
-                    Debug.Log(("Stack with relevant item with space left in stack at index: " +i.ToString()));
-                }
             }
         }
         
-        Debug.Log(("Added to index: " +index.ToString()));
+        Debug.Log(("Saved index: " +index.ToString()));
         return index;
     }
 
+    public int GetItemIndexFromID(int id)
+    {
+        SampleData info;
+        Market.MarketInstance.samples.TryGetValue(id, out info);
+        return GetItemIndex(info.collectableData);
+
+    }
+    public bool AddItemIDToInventory(int itemID)
+    {
+        if (market.samples.TryGetValue(itemID, out SampleData dataOut)){
+            Debug.Log(dataOut.ToString());
+            return AddItemToInventory(dataOut.collectableData);
+        }
+        else
+        {
+            return false;
+        }
+         
+    }
     public bool AddItemToInventory(CollectableData data)
     {
         return AddToInventory(data, GetItemIndex(data));
@@ -202,12 +222,19 @@ public class Player : MonoBehaviour
     // Adds an item to the player inventory
     bool AddToInventory(CollectableData data, int index)
     {
+        if (index < 0) Debug.Log("-- NOT SO SPOOKY");
+
+
+        if(index < 0)
+        {
+            return false;
+        }
         
         Debug.Log(inventory[index].amount.ToString() +" in Inventory at slot " +index.ToString());
         Debug.Log("Max Stack Size for item: " +data.maxStackSize.ToString());
         
         // Double checks that it's adding to the correct stack, and that the addition won't make the stack overflow
-        if (data.itemID == inventory[index].item && inventory[index].amount < data.maxStackSize)
+        if (data.itemID == inventory[index].item && inventory[index].amount  < data.maxStackSize)
         {
             // Just adds one to the amount of a certain item in the inventory
             inventory[index].amount += 1;
@@ -233,6 +260,10 @@ public class Player : MonoBehaviour
     // Removes items from the player inventory
     bool RemoveFromInventory(int index, int amount)
     {
+        if (index < 0)
+        {
+            return false;
+        }
         // Checks if there is enough of the item to remove from the inventory to prevent negative amounts of an item
         if(inventory[index].amount >= amount)
         {
@@ -246,28 +277,12 @@ public class Player : MonoBehaviour
         }
     }
 
-    void ShootItem()
-    {
-        int index = 0;
-        if(inventory[index].amount >= 1)
-        {
-            Vector3 dir = transform.forward * ejectionMultiplier;
-            test.gameObject.SetActive(true);
-            test.AddForce(dir);
-            RemoveFromInventory(index, 1);
-
-        }
-
-    }
-
-
-    
     IEnumerator BeginVacuumItem(GameObject item , Vector3 spawn , float waitTime)
     {
         float elapsedTime = 0;
         item.transform.position = spawn;
  
-        while (elapsedTime < waitTime)
+        while (elapsedTime < waitTime && (currentMode == Mode.Collection))
         {
             Vector3 target = collectionPoint.transform.position;
             item.transform.position = Vector3.Lerp(spawn, target, (elapsedTime / waitTime));
@@ -279,27 +294,14 @@ public class Player : MonoBehaviour
         // Make sure we got there
         item.transform.position = collectionPoint.transform.position;
 
-        item.GetComponent<VacuumObject>().RetrieveObjects(this);
-        
-        objectpoolVacuum.ReturnObjectToPool(item);
+    
         
         yield return null;
     }
     
-    //
-    [ContextMenu("Add New Vacuum Item")]
-    void AddNewVacuumItem()
+    public void VacuumItem(GameObject item, Vector3 spawn)
     {
-        if (currentMode == Mode.Collection)
-        {
-            //Debug.Log("Adding new Vacuum Item");
-            GameObject vacuumItem = objectpoolVacuum.GetObject();
-            StartCoroutine(BeginVacuumItem( vacuumItem,
-                collectionPoint.transform.position + (collectionPoint.transform.forward * maxCollectionDistance),
-                vacuumSpeed));
-           
-            
-        }
+        StartCoroutine(BeginVacuumItem(item, spawn, vacuumSpeed));
     }
 
 

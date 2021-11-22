@@ -8,7 +8,6 @@
 
 using AOT;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
@@ -32,7 +31,7 @@ namespace LeapInternal {
     /// you are working with is being overwritten, consider making a copy,
     /// or turning up the MinPoolSize.
     /// </summary>
-    public static bool EnablePooling = true;
+    public static bool EnablePooling = false;
 
     /// <summary>
     /// Specifies how many objects of a specific type need to be in the pool
@@ -43,10 +42,10 @@ namespace LeapInternal {
     /// </summary>
     public static uint MinPoolSize = 64;
 
-    private static ConcurrentDictionary<IntPtr, ActiveMemoryInfo> _activeMemory =
-      new ConcurrentDictionary<IntPtr, ActiveMemoryInfo>();
-    private static ConcurrentDictionary<PoolKey, Queue<object>> _pooledMemory =
-      new ConcurrentDictionary<PoolKey, Queue<object>>();
+    private static Dictionary<IntPtr, ActiveMemoryInfo> _activeMemory =
+      new Dictionary<IntPtr, ActiveMemoryInfo>();
+    private static Dictionary<PoolKey, Queue<object>> _pooledMemory =
+      new Dictionary<PoolKey, Queue<object>>();
 
     [MonoPInvokeCallback(typeof(Allocate))]
     public static IntPtr Pin(UInt32 size, eLeapAllocatorType typeHint, IntPtr state) {
@@ -88,7 +87,7 @@ namespace LeapInternal {
 
         //Put the information about the newly pinned allocation into the
         //active memory map so it can be retrieved and freed layer.
-        _activeMemory.TryAdd(ptr, new ActiveMemoryInfo() {
+        _activeMemory.Add(ptr, new ActiveMemoryInfo() {
           handle = handle,
           key = key
         });
@@ -108,14 +107,10 @@ namespace LeapInternal {
         ActiveMemoryInfo info = _activeMemory[ptr];
 
         //First we return the object back to its pool
-        if (EnablePooling) {
-          _pooledMemory[info.key].Enqueue(info.handle.Target);
-        }
+        _pooledMemory[info.key].Enqueue(info.handle.Target);
 
         //Then we remove the pointer from the active memory map
-        ActiveMemoryInfo value;
-
-        _activeMemory.TryRemove(ptr, out value);
+        _activeMemory.Remove(ptr);
 
         //Finally we unpin the memory
         info.handle.Free();

@@ -154,11 +154,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3cd13c063ec1ee445a6057a6b908927e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  data:
-    name: Test
-    itemID: 1
-    maxStackSize: 5
-  health: 0
+  itemID: 5
+  _sampleCount: 0
+  _shatterCount: 0
+  healthSegments: 0
 --- !u!136 &92672705
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -264,6 +263,7 @@ GameObject:
   - component: {fileID: 186814728}
   - component: {fileID: 186814727}
   - component: {fileID: 186814732}
+  - component: {fileID: 186814733}
   m_Layer: 0
   m_Name: Sphere
   m_TagString: Untagged
@@ -288,7 +288,8 @@ MonoBehaviour:
   customEvents: {fileID: 1176399810}
   menu: {fileID: 0}
   thruster: {fileID: 0}
-  dig: {fileID: 0}
+  dig: {fileID: 186814733}
+  market: {fileID: 719525246}
   inventory:
   - item: 0
     amount: 0
@@ -301,7 +302,7 @@ MonoBehaviour:
   - item: 0
     amount: 0
   maxCollectionDistance: 5
-  vacuumSpeed: 0.5
+  vacuumSpeed: 3
   collectionPoint: {fileID: 186814731}
   ejectionMultiplier: 0
   test: {fileID: 0}
@@ -373,7 +374,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 186814726}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -6.6810126, y: -2.2476807, z: 1.37}
+  m_LocalPosition: {x: -6.6810126, y: -1.212, z: 1.37}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -395,6 +396,27 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &186814733
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 186814726}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbd9091a3b3fa6248880f3621843e411, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mask:
+    serializedVersion: 2
+    m_Bits: 256
+  active: 1
+  rig: {fileID: 186814731}
+  customEvents: {fileID: 1176399810}
+  maxBurnout: 0.01
+  currOutput: 0
+  activeSample: {fileID: 0}
 --- !u!1 &195253507
 GameObject:
   m_ObjectHideFlags: 0
@@ -424,9 +446,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9dd739c6497f4a94eb1e31f0556ea21b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  customEvents: {fileID: 1176399810}
   objectToSpawn: {fileID: 92672703}
   terrain: {fileID: 1582874480}
   radius: 5
+  itemID: 0
 --- !u!4 &195253509
 Transform:
   m_ObjectHideFlags: 0
@@ -490,11 +514,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3cd13c063ec1ee445a6057a6b908927e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  data:
-    name: Test
-    itemID: 1
-    maxStackSize: 5
-  health: 0
+  itemID: 2
+  _sampleCount: 0
+  _shatterCount: 0
+  healthSegments: 0
 --- !u!136 &210443352
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -619,11 +642,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3cd13c063ec1ee445a6057a6b908927e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  data:
-    name: Test
-    itemID: 1
-    maxStackSize: 5
-  health: 0
+  itemID: 2
+  _sampleCount: 0
+  _shatterCount: 0
+  healthSegments: 0
 --- !u!136 &335142028
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -731,7 +753,47 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed7acada8e1e10249be90ff3e7c3e815, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  customEvents: {fileID: 1176399810}
+  itemData:
+  - sampleData:
+      collectableData:
+        name: 
+        itemID: 5
+        maxStackSize: 10
+      points: 0
+      sampleCount: 15
+      shatterCount: 10
+  - sampleData:
+      collectableData:
+        name: 
+        itemID: 1
+        maxStackSize: 30
+      points: 0
+      sampleCount: 30
+      shatterCount: 5
+  - sampleData:
+      collectableData:
+        name: 
+        itemID: 2
+        maxStackSize: 5
+      points: 0
+      sampleCount: 10
+      shatterCount: 5
+  - sampleData:
+      collectableData:
+        name: 
+        itemID: 3
+        maxStackSize: 25
+      points: 0
+      sampleCount: 50
+      shatterCount: 20
+  - sampleData:
+      collectableData:
+        name: 
+        itemID: 4
+        maxStackSize: 250
+      points: 0
+      sampleCount: 100
+      shatterCount: 30
 --- !u!65 &719525247
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -855,11 +917,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3cd13c063ec1ee445a6057a6b908927e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  data:
-    name: Test
-    itemID: 1
-    maxStackSize: 5
-  health: 0
+  itemID: 1
+  _sampleCount: 0
+  _shatterCount: 0
+  healthSegments: 5
 --- !u!136 &841097012
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -1029,6 +1090,7 @@ GameObject:
   - component: {fileID: 1176399811}
   - component: {fileID: 1176399810}
   - component: {fileID: 1176399812}
+  - component: {fileID: 1176399813}
   m_Layer: 0
   m_Name: GameObject
   m_TagString: Untagged
@@ -1063,6 +1125,9 @@ MonoBehaviour:
   shootItem:
     m_PersistentCalls:
       m_Calls: []
+  spawnItems:
+    m_PersistentCalls:
+      m_Calls: []
   toggleThrusters:
     m_PersistentCalls:
       m_Calls: []
@@ -1094,6 +1159,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   objectToPool: {fileID: 1784679949}
+--- !u!114 &1176399813
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1176399809}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b3937dd7395883647874182e328ef8a9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1205776078
 GameObject:
   m_ObjectHideFlags: 0
@@ -1143,11 +1220,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3cd13c063ec1ee445a6057a6b908927e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  data:
-    name: Test
-    itemID: 1
-    maxStackSize: 5
-  health: 0
+  itemID: 3
+  _sampleCount: 0
+  _shatterCount: 0
+  healthSegments: 0
 --- !u!136 &1205776081
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -1407,7 +1483,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 206f5e228b4a5e0488ba91a8ccc0367b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gatheredObject: {fileID: 0}
+  collectionPoint: {x: 0, y: 0, z: 0}
+  vacSpeed: 3
+  collectionThreshold: 0
+  player: {fileID: 0}
 --- !u!138 &1784679955
 FixedJoint:
   m_ObjectHideFlags: 0
@@ -1487,11 +1566,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3cd13c063ec1ee445a6057a6b908927e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  data:
-    name: Test
-    itemID: 1
-    maxStackSize: 5
-  health: 0
+  itemID: 5
+  _sampleCount: 0
+  _shatterCount: 0
+  healthSegments: 0
 --- !u!136 &1924276281
 CapsuleCollider:
   m_ObjectHideFlags: 0

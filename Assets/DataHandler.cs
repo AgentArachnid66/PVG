@@ -68,7 +68,7 @@ public class DataHandler : MonoBehaviour
 
             customEvents.UpdateHandPosition.Invoke(hand.IsLeft, hand.PalmPosition);
 
-            customEvents.UpdateLaser.Invoke(hand.IsLeft, hand.PalmNormal.ToUnityVector3(), hand.PalmPosition.ToUnityVector3());
+            customEvents.UpdateLaser.Invoke(hand.IsLeft, CustomUtility.LeapVectorToUnityVector3(hand.PalmNormal), CustomUtility.LeapVectorToUnityVector3(hand.PalmPosition));
 
 
             //Debug.Log(origin.position + hand.PalmPosition.ToVector3());

@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class Digging : MonoBehaviour
 {
-
+    [SerializeField] private LayerMask mask;
     /*
      * <summary>
      * This class is in charge of the digging portion of the gameplay loop
@@ -56,6 +56,8 @@ public class Digging : MonoBehaviour
     private HandData leftHand;
     private HandData rightHand;
 
+    public Sample activeSample;
+
     private void Start()
     {
         customEvents.UpdateLaser.AddListener(UpdateBeamInfo);
@@ -82,25 +84,57 @@ public class Digging : MonoBehaviour
 
                     laserDir = ((leftHand.location - rig.position) + (rightHand.location - rig.position)) / 2;
 
+                    // Debug
+                    Vector3 laserPos = (leftHand.location + rightHand.location) / 2;
+                    Debug.DrawLine(laserPos,laserPos + laserDir * 500);
+
+
                 }
+            }
+            else if (hands == Hand.Left || hands == Hand.Right)
+            {
+                // If we want to combine, then we can calculate the power using the distance between the hands
+                handDist = hands == Hand.Left ? leftHand.location : rightHand.location;
+                currOutput = maxBurnout / 2;
+
+                laserDir = hands == Hand.Left ? leftHand.orientation : rightHand.orientation;
+
+                // Debug
+                Vector3 laserPos = hands == Hand.Left ? leftHand.location : rightHand.location;
+                Debug.DrawLine(laserPos, laserPos + laserDir * 500);
+                //Debug.Log(hands.ToString() + " at position: " + laserPos.ToString());
+
             }
 
             // If hits a sample, apply damage
             RaycastHit hit;
 
-            if (Physics.Raycast(rig.position, laserDir, out hit))
+            Ray ray = new Ray(rig.position, laserDir);
+            if (Physics.Raycast(ray, out hit, float.MaxValue, mask))
             {
-                print("Found an object - distance: " + hit.distance);
-                Sample sample = hit.collider.gameObject.GetComponent<Sample>();
-                if (sample != null)
+                //Debug.Log($"Object Hit: {hit.collider.gameObject.name}");
+
+                if (activeSample == null || activeSample.gameObject.GetInstanceID() != hit.collider.gameObject.GetInstanceID())
                 {
-                    sample.TakeDamage(currOutput);
+
+                    activeSample = hit.collider.gameObject.GetComponent<Sample>();
+
                 }
+
+                if (!activeSample.TakeDamage(currOutput))
+                {
+                    activeSample = null;
+                }
+
+            }
+            else
+            {
+                activeSample = null;
             }
         }
     }
 
-    
+
     void UpdateBeamInfo(bool isLeft, Vector3 handOrientation, Vector3 handPosition)
     {
         if (hands != Hand.None)

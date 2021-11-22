@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Spawner : MonoBehaviour
 {
+    public CustomEvents customEvents;
+
     public GameObject objectToSpawn;
 
     public Terrain terrain;
@@ -11,11 +13,12 @@ public class Spawner : MonoBehaviour
     //public int amountToSpawn;
     public float radius;
 
+    public int itemID;
+
     // Start is called before the first frame update
     void Start()
     {
-        Vector3 location = new Vector3(Random.Range(-radius, radius), 0f, Random.Range(-radius, radius));
-        Debug.Log(terrain.SampleHeight((location + transform.position)));
+        customEvents.spawnItems.AddListener(Spawn);
 
     }
 
@@ -23,5 +26,12 @@ public class Spawner : MonoBehaviour
     void Update()
     {
 
+    }
+
+    [ContextMenu("Spawn Item")]
+    public void Spawn()
+    {
+        Vector3 location = new Vector3(Random.Range(-radius, radius), 0f, Random.Range(-radius, radius));
+        Debug.Log(terrain.SampleHeight((location + transform.position)));
     }
 }

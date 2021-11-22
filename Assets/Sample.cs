@@ -4,40 +4,106 @@ using UnityEngine;
 using System;
 public class Sample : Collectable
 {
+    public int itemID;
+    [SerializeField] private int _sampleCount;
+    [SerializeField] private int _shatterCount;
 
-    public float health;
+    public int healthSegments = 5;
 
+    private bool canBeDamaged = true;
     void OnCollisionEnter(Collision other)
     {
         Market market = other.gameObject.GetComponent<Market>();
-        Player player = other.gameObject.GetComponent<Player>();
-
-        if (player != null)
-        {
-            player.AddItemToInventory(data);
-            gameObject.SetActive(false);
-        }
 
         if(market != null)
         {
-            market.DepositSample(data.itemID);
+            market.DepositSample(itemID);
 
         }
 
     }
 
-    public void TakeDamage(float damage)
+    private void Awake()
     {
-        health -= damage;
-        if(health <= 0)
+        CustomEvents.CustomEventsInstance.spawnItems.AddListener(OnSpawn);
+    }
+    public void OnSpawn()
+    {
+        SampleData data;
+
+        if(Market.MarketInstance.samples.TryGetValue(itemID, out data))
         {
-            Break();
+            _sampleCount = data.sampleCount;
+            _shatterCount = data.shatterCount;
+
         }
     }
 
-    private void Break()
+    [ContextMenu("On Break")]
+    public void OnBreak(float damage)
     {
-        throw new System.NotImplementedException();
+        if (_sampleCount <= _shatterCount)
+        {
+            Debug.Log($"<color=#00FFFF>SHATTER ATTEMPT</color>");
+            int sampleCount = _sampleCount;
+            for (int i = 0; i < sampleCount; i++)
+            {
+                if (Player.PlayerInstance.GetItemIndexFromID(itemID) <= -1)
+                {
+                    Debug.Log("Ran out of space");
+                    break;
+                }
+                //CoroutineManager.Instance.StartCoroutine(AddOreCount(_sampleCount));
+                AddOreCount(_sampleCount);
+                _sampleCount--;
+            }
+
+
+            gameObject.SetActive(_sampleCount > 0);
+        }
+        else
+        {
+            Debug.Log($"<color=#00FFFF>TESTING INVENTORY</color>");
+            if (Player.PlayerInstance.GetItemIndexFromID(itemID) > -1)
+            {
+                Debug.Log($"<color=#0000FF>ADDED</color>");
+                //CoroutineManager.Instance.StartCoroutine(AddOreCount(_sampleCount));
+                AddOreCount(_sampleCount);
+                _sampleCount--;
+            }
+        }
+    }
+
+    //private IEnumerator AddOreCount(int sample)
+    private void AddOreCount(int sample)
+    {
+
+
+        //yield return new WaitForSeconds(0.1f);
+
+        if (Player.PlayerInstance.AddItemIDToInventory(itemID))
+        {
+            Debug.Log($"Added {itemID}, Sample: {sample}.");
+           // canBeDamaged = true;
+        }
+        else
+        {
+           // canBeDamaged = false;
+        }
+    }
+    
+    public bool TakeDamage(float damage)
+    {
+        Debug.Log($"<color=#FF0000>DAMAGED</color>");
+        //if (canBeDamaged)
+        {
+            OnBreak(damage);
+            //canBeDamaged = false;
+            
+        }
+
+        Debug.Log($"<color=#00FF00>Health: {_sampleCount}</color>");
+        return _sampleCount > 0;
     }
 
 }

@@ -8,6 +8,18 @@ using UnityEngine.Events;
 
 public class CustomEvents : MonoBehaviour
 {
+    private static CustomEvents customEvents;
+    public static CustomEvents CustomEventsInstance
+    {
+        get
+        {
+            if (ReferenceEquals(customEvents, null))
+                customEvents = GameObject.FindObjectOfType<CustomEvents>();
+
+            return customEvents;
+        }
+    }
+
     public UnityEvent engageThrusters = new UnityEvent();
 
     public UnityEvent disengageThrusters = new UnityEvent();
@@ -18,7 +30,7 @@ public class CustomEvents : MonoBehaviour
 
     public UnityEvent shootItem = new UnityEvent();
 
-
+    public UnityEvent spawnItems = new UnityEvent();
 
     public UnityEventBool toggleThrusters = new UnityEventBool();
 
@@ -84,8 +96,8 @@ public class CustomEvents : MonoBehaviour
         }
         if (Input.GetMouseButtonDown(1))
         {
-            Debug.Log("Fire Inventory Item");
-            shootItem.Invoke();
+            Debug.Log("Switch to Laser");
+            switchMode.Invoke(Mode.Weapon, Hand.Left);
         }
     }
 }
@@ -141,11 +153,22 @@ public class UnityEventPosOrient : UnityEvent<bool, Vector3, Vector3>
 {
 }
 
+[System.Serializable]
 public struct SampleData
 {
     public CollectableData collectableData;
     public int points;
+    public int sampleCount;
+    public int shatterCount;
     // Add in image at a later date
+
+    public SampleData(CollectableData data, int points, int sample, int shatter)
+    {
+        this.collectableData = data;
+        this.points = points;
+        sampleCount = sample;
+        shatterCount = shatter;
+    }
 }
 
 [System.Serializable]
@@ -155,6 +178,19 @@ public struct CollectableData
     public int itemID;
     public int maxStackSize;
 
+    public CollectableData(string itemName, int id, int mss)
+    {
+        name = itemName;
+        itemID = id;
+        maxStackSize = mss;
+    }
+
+}
+
+[System.Serializable]
+public struct MarketData
+{
+    public SampleData sampleData;
 }
 
 [System.Serializable]
@@ -163,6 +199,11 @@ public struct InventoryData
     public int item;
     public int amount;
 
+    public InventoryData(int itemID = -1, int amount = 0)
+    {
+        item = itemID;
+        this.amount = amount;
+    }
 }
 
 [System.Serializable]
