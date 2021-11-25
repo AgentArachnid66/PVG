@@ -217,6 +217,8 @@ public class Player : MonoBehaviour
         }
          
     }
+
+
     public bool AddItemToInventory(CollectableData data)
     {
         return AddToInventory(data, GetItemIndex(data));
@@ -225,9 +227,6 @@ public class Player : MonoBehaviour
     // Adds an item to the player inventory
     bool AddToInventory(CollectableData data, int index)
     {
-        if (index < 0) Debug.Log("-- NOT SO SPOOKY");
-
-
         if(index < 0)
         {
             return false;
@@ -297,8 +296,6 @@ public class Player : MonoBehaviour
         // Make sure we got there
         item.transform.position = collectionPoint.transform.position;
 
-    
-        
         yield return null;
     }
     

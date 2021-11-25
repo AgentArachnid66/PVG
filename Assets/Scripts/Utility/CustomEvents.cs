@@ -99,6 +99,12 @@ public class CustomEvents : MonoBehaviour
             Debug.Log("Switch to Laser");
             switchMode.Invoke(Mode.Weapon, Hand.Left);
         }
+        if (Input.GetMouseButtonDown(2))
+        {
+            Debug.Log("Both Hands Laser");
+            switchMode.Invoke(Mode.Weapon, Hand.Both);
+        }
+
     }
 }
   
@@ -212,4 +218,18 @@ public struct HandData
     public bool isLeft;
     public Vector3 location;
     public Vector3 orientation;
+}
+
+[System.Serializable]
+public enum NodeType
+{
+    Unpure,
+    Normal,
+    Pure
+}
+
+[System.Serializable]
+public struct NodeData
+{
+    public NodeType type;
 }

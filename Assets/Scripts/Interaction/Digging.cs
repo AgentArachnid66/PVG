@@ -6,7 +6,7 @@ using UnityEngine;
 public class Digging : MonoBehaviour
 {
     [SerializeField] private float _cooldown = 0.25f;
-    private bool _isInCooldown;
+    [SerializeField]private bool _isInCooldown;
     
     [SerializeField] private LayerMask mask;
     /*
@@ -48,7 +48,8 @@ public class Digging : MonoBehaviour
     // The vector between the hands, to measure the distance between them and to get the orientation
     private Vector3 handDist;
 
-    private Vector3 laserDir;
+    private Vector3[] laserDir = new Vector3[2];
+    private Vector3[] laserPos = new Vector3[2];
 
     // Enum that holds which hands are active in this mode
     private Hand hands;
@@ -74,24 +75,37 @@ public class Digging : MonoBehaviour
         // First check if the laser is active
         if (active)
         {
+            laserDir[1] = Vector3.zero;
+            laserPos[1] = Vector3.zero;
+
             // Then check if the player has both hands as lasers
             if (hands == Hand.Both)
             {
                 // If the dot is close to -1 then the hands are facing each other
-                combine = Vector3.Dot(leftHand.orientation, rightHand.orientation) <= -0.95;
+                combine = Vector3.Dot(leftHand.orientation.normalized, rightHand.orientation.normalized) <= -0.95;
                 if (combine)
                 {
                     // If we want to combine, then we can calculate the power using the distance between the hands
                     handDist = leftHand.location - rightHand.location;
                     currOutput = 1 / handDist.magnitude;
 
-                    laserDir = ((leftHand.location - rig.position) + (rightHand.location - rig.position)) / 2;
+                    laserDir[0] = ((leftHand.location - rig.position) + (rightHand.location - rig.position)) / 2;
 
                     // Debug
-                    Vector3 laserPos = (leftHand.location + rightHand.location) / 2;
-                    Debug.DrawLine(laserPos,laserPos + laserDir * 500);
-                    Debug.Log($"The laser starts at {laserPos}");
+                    laserPos[0] = (leftHand.location + rightHand.location) / 2;
+                    //Debug.DrawLine(laserPos[0],laserPos[0] + laserDir[0] * 500);
+                    //Debug.Log($"The laser starts at {laserPos}");
 
+                }
+                else
+                {
+                    for(int i = 0; i < laserDir.Length; i++)
+                    {
+                        currOutput = maxBurnout / 2;
+
+                        laserDir[i] = i == 0 ? leftHand.orientation : rightHand.orientation;
+                        laserPos[i] = i == 0 ? leftHand.location : rightHand.location;
+                    }
                 }
             }
             else if (hands == Hand.Left || hands == Hand.Right)
@@ -100,48 +114,46 @@ public class Digging : MonoBehaviour
                 handDist = hands == Hand.Left ? leftHand.location : rightHand.location;
                 currOutput = maxBurnout / 2;
 
-                laserDir = hands == Hand.Left ? leftHand.orientation : rightHand.orientation;
+                laserDir[0] = hands == Hand.Left ? leftHand.orientation : rightHand.orientation;
 
-                // Debug
-                Vector3 laserPos = hands == Hand.Left ? leftHand.location : rightHand.location;
-                //Debug.DrawLine(laserPos, laserPos + laserDir * 500);
-                //Debug.Log(hands.ToString() + " at position: " + laserPos.ToString());
-
+                laserPos[0] = hands == Hand.Left ? leftHand.location : rightHand.location;
             }
 
             // If hits a sample, apply damage
             RaycastHit hit;
-
-            Ray ray = new Ray(rig.position, laserDir);
-            Debug.DrawRay(rig.position, laserDir);
-
-            if (Physics.Raycast(ray, out hit, float.MaxValue, mask))
+            for (int i = 0; i < laserDir.Length; i++)
             {
+                Ray ray = new Ray(laserPos[i], laserDir[i]);
+                Debug.DrawLine(laserPos[i], laserDir[i] * 500f);
+
                 
-                //Debug.Log($"Object Hit: {hit.collider.gameObject.name}");
-
-                if (activeSample == null || activeSample.gameObject.GetInstanceID() != hit.collider.gameObject.GetInstanceID())
+                if (Physics.Raycast(ray, out hit, float.MaxValue, mask))
                 {
 
-                    activeSample = hit.collider.gameObject.GetComponent<Sample>();
-                }
+                    //Debug.Log($"Object Hit: {hit.collider.gameObject.name}");
 
-                if (!_isInCooldown)
-                {
-                    Debug.LogWarning("Hit Sample");
-                    _isInCooldown = true;
-                    if (!activeSample.TakeDamage(currOutput))
+                    if (activeSample == null || activeSample.gameObject.GetInstanceID() != hit.collider.gameObject.GetInstanceID())
                     {
-                        activeSample = null;
+                        activeSample = hit.collider.gameObject.GetComponent<Sample>();
                     }
 
-                    StartCoroutine(ResetCooldown());
-                }
+                    if (!_isInCooldown)
+                    {
+                        Debug.LogWarning("Hit Sample");
+                        _isInCooldown = true;
+                        if (!activeSample.PlayerDamage(currOutput))
+                        {
+                            activeSample = null;
+                        }
 
-            }
-            else
-            {
-                activeSample = null;
+                        StartCoroutine(ResetCooldown());
+                    }
+
+                }
+                else
+                {
+                    activeSample = null;
+                }
             }
         }
     }
@@ -167,8 +179,8 @@ public class Digging : MonoBehaviour
                 rightHand.location = handPosition;
                 rightHand.orientation = handOrientation;
             }
-            Color colour = hands == (isLeft ? Hand.Left : Hand.Right) || hands == Hand.Both ? Color.green : Color.red;
-            Debug.DrawLine(handPosition, handPosition + (handOrientation * 500), colour);
+            //Color colour = hands == (isLeft ? Hand.Left : Hand.Right) || hands == Hand.Both ? Color.green : Color.red;
+            //Debug.DrawLine(handPosition, handPosition + (handOrientation * 500), colour);
 
 
         }

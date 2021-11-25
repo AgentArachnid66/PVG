@@ -1,38 +1,38 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System;
-public class Sample : Collectable
+
+public class Ore : Sample
 {
-    public int itemID;
-    [SerializeField] private int _sampleCount;
-    [SerializeField] private int _shatterCount;
+    [SerializeField] protected int _sampleCount;
+    [SerializeField] protected int _shatterCount;
 
-    public int healthSegments = 5;
 
-    private bool canBeDamaged = true;
     void OnCollisionEnter(Collision other)
     {
         Market market = other.gameObject.GetComponent<Market>();
 
-        if(market != null)
+        if (market != null)
         {
             market.DepositSample(itemID);
 
         }
 
+
     }
 
-    private void Awake()
+
+    void Awake()
     {
         CustomEvents.CustomEventsInstance.spawnItems.AddListener(OnSpawn);
     }
-    public void OnSpawn()
+    public override void OnSpawn()
     {
         SampleData data;
 
-        if(Market.MarketInstance.samples.TryGetValue(itemID, out data))
+        if (Market.MarketInstance.samples.TryGetValue(itemID, out data))
         {
+            
             _sampleCount = data.sampleCount;
             _shatterCount = data.shatterCount;
 
@@ -40,7 +40,7 @@ public class Sample : Collectable
     }
 
     [ContextMenu("On Break")]
-    public void OnBreak(float damage)
+    public override void OnBreak(float damage)
     {
 
         if (_sampleCount <= _shatterCount)
@@ -54,8 +54,8 @@ public class Sample : Collectable
                     Debug.Log("Ran out of space");
                     break;
                 }
-                CoroutineManager.Instance.StartCoroutine(AddOreCount(_sampleCount));
-                //AddOreCount(_sampleCount);
+                //CoroutineManager.Instance.StartCoroutine(AddOreCount(_sampleCount));
+                AddOreCount(_sampleCount);
             }
 
 
@@ -68,39 +68,33 @@ public class Sample : Collectable
             if (Player.PlayerInstance.GetItemIndexFromID(itemID) > -1)
             {
                 Debug.Log($"<color=#0000FF>ADDED</color>");
+                //CoroutineManager.Instance.StartCoroutine(AddOreCount(_sampleCount));
+                AddOreCount(_sampleCount);
 
-                _sampleCount--;
-                CoroutineManager.Instance.StartCoroutine(AddOreCount(_sampleCount));
-                //AddOreCount(_sampleCount);
-                
             }
         }
     }
 
     //private IEnumerator AddOreCount(int sample)
-    private IEnumerator AddOreCount(int sample)
+    protected override void AddOreCount(int sample)
     {
         //Start 0.1 second animation of collection
-        
-        yield return new WaitForSeconds(0.1f);
+
+        //yield return new WaitForSeconds(0.1f);
 
         if (Player.PlayerInstance.AddItemIDToInventory(itemID))
         {
             Debug.Log($"Added {itemID}, Sample: {sample}.");
+            _sampleCount--;
         }
-        
+
     }
-    
-    public bool TakeDamage(float damage)
+
+    protected override bool TakeDamage(float damage)
     {
         Debug.Log($"<color=#FF0000>DAMAGED</color>");
 
         OnBreak(damage);
-            
-        
-
-        Debug.Log($"<color=#00FF00>Health: {_sampleCount}</color>");
         return _sampleCount > 0;
     }
-
 }
