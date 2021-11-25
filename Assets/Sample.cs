@@ -42,6 +42,7 @@ public class Sample : Collectable
     [ContextMenu("On Break")]
     public void OnBreak(float damage)
     {
+
         if (_sampleCount <= _shatterCount)
         {
             Debug.Log($"<color=#00FFFF>SHATTER ATTEMPT</color>");
@@ -53,13 +54,14 @@ public class Sample : Collectable
                     Debug.Log("Ran out of space");
                     break;
                 }
-                //CoroutineManager.Instance.StartCoroutine(AddOreCount(_sampleCount));
-                AddOreCount(_sampleCount);
+                CoroutineManager.Instance.StartCoroutine(AddOreCount(_sampleCount));
+                //AddOreCount(_sampleCount);
                 _sampleCount--;
             }
 
 
             gameObject.SetActive(_sampleCount > 0);
+
         }
         else
         {
@@ -67,40 +69,33 @@ public class Sample : Collectable
             if (Player.PlayerInstance.GetItemIndexFromID(itemID) > -1)
             {
                 Debug.Log($"<color=#0000FF>ADDED</color>");
-                //CoroutineManager.Instance.StartCoroutine(AddOreCount(_sampleCount));
-                AddOreCount(_sampleCount);
-                _sampleCount--;
+                CoroutineManager.Instance.StartCoroutine(AddOreCount(_sampleCount));
+                //AddOreCount(_sampleCount);
+                
             }
         }
     }
 
     //private IEnumerator AddOreCount(int sample)
-    private void AddOreCount(int sample)
+    private IEnumerator AddOreCount(int sample)
     {
-
-
-        //yield return new WaitForSeconds(0.1f);
+        yield return new WaitForSeconds(0.1f);
 
         if (Player.PlayerInstance.AddItemIDToInventory(itemID))
         {
             Debug.Log($"Added {itemID}, Sample: {sample}.");
-           // canBeDamaged = true;
+            _sampleCount--;
         }
-        else
-        {
-           // canBeDamaged = false;
-        }
+
     }
     
     public bool TakeDamage(float damage)
     {
         Debug.Log($"<color=#FF0000>DAMAGED</color>");
-        //if (canBeDamaged)
-        {
-            OnBreak(damage);
-            //canBeDamaged = false;
+
+        OnBreak(damage);
             
-        }
+        
 
         Debug.Log($"<color=#00FF00>Health: {_sampleCount}</color>");
         return _sampleCount > 0;

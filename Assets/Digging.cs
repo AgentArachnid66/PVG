@@ -75,7 +75,7 @@ public class Digging : MonoBehaviour
             if (hands == Hand.Both)
             {
                 // If the dot is close to -1 then the hands are facing each other
-                combine = Vector3.Dot(leftHand.orientation, rightHand.orientation) <= 0.95;
+                combine = Vector3.Dot(leftHand.orientation, rightHand.orientation) <= -0.95;
                 if (combine)
                 {
                     // If we want to combine, then we can calculate the power using the distance between the hands
@@ -87,13 +87,13 @@ public class Digging : MonoBehaviour
                     // Debug
                     Vector3 laserPos = (leftHand.location + rightHand.location) / 2;
                     Debug.DrawLine(laserPos,laserPos + laserDir * 500);
-
+                    Debug.Log($"The laser starts at {laserPos}");
 
                 }
             }
             else if (hands == Hand.Left || hands == Hand.Right)
             {
-                // If we want to combine, then we can calculate the power using the distance between the hands
+
                 handDist = hands == Hand.Left ? leftHand.location : rightHand.location;
                 currOutput = maxBurnout / 2;
 
@@ -101,7 +101,7 @@ public class Digging : MonoBehaviour
 
                 // Debug
                 Vector3 laserPos = hands == Hand.Left ? leftHand.location : rightHand.location;
-                Debug.DrawLine(laserPos, laserPos + laserDir * 500);
+                //Debug.DrawLine(laserPos, laserPos + laserDir * 500);
                 //Debug.Log(hands.ToString() + " at position: " + laserPos.ToString());
 
             }
@@ -110,15 +110,18 @@ public class Digging : MonoBehaviour
             RaycastHit hit;
 
             Ray ray = new Ray(rig.position, laserDir);
+            Debug.DrawRay(rig.position, laserDir);
+
             if (Physics.Raycast(ray, out hit, float.MaxValue, mask))
             {
+                
                 //Debug.Log($"Object Hit: {hit.collider.gameObject.name}");
 
                 if (activeSample == null || activeSample.gameObject.GetInstanceID() != hit.collider.gameObject.GetInstanceID())
                 {
 
                     activeSample = hit.collider.gameObject.GetComponent<Sample>();
-
+                    Debug.LogWarning("Hit Sample");
                 }
 
                 if (!activeSample.TakeDamage(currOutput))
@@ -143,13 +146,15 @@ public class Digging : MonoBehaviour
             {
                 leftHand.location = handPosition;
                 leftHand.orientation = handOrientation;
+                
             }
             else
             {
                 rightHand.location = handPosition;
                 rightHand.orientation = handOrientation;
             }
-
+            Color colour = hands == (isLeft ? Hand.Left : Hand.Right) || hands == Hand.Both ? Color.green : Color.red;
+            Debug.DrawLine(handPosition, handPosition + (handOrientation * 500), colour);
 
 
         }
