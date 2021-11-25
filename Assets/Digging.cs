@@ -5,6 +5,9 @@ using UnityEngine;
 
 public class Digging : MonoBehaviour
 {
+    [SerializeField] private float _cooldown = 0.25f;
+    private bool _isInCooldown;
+    
     [SerializeField] private LayerMask mask;
     /*
      * <summary>
@@ -121,12 +124,18 @@ public class Digging : MonoBehaviour
                 {
 
                     activeSample = hit.collider.gameObject.GetComponent<Sample>();
-                    Debug.LogWarning("Hit Sample");
                 }
 
-                if (!activeSample.TakeDamage(currOutput))
+                if (!_isInCooldown)
                 {
-                    activeSample = null;
+                    Debug.LogWarning("Hit Sample");
+                    _isInCooldown = true;
+                    if (!activeSample.TakeDamage(currOutput))
+                    {
+                        activeSample = null;
+                    }
+
+                    StartCoroutine(ResetCooldown());
                 }
 
             }
@@ -137,6 +146,11 @@ public class Digging : MonoBehaviour
         }
     }
 
+    private IEnumerator ResetCooldown()
+    {
+        yield return new WaitForSeconds(_cooldown);
+        _isInCooldown = false;
+    }
 
     void UpdateBeamInfo(bool isLeft, Vector3 handOrientation, Vector3 handPosition)
     {

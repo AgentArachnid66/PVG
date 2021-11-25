@@ -45,7 +45,7 @@ public class Sample : Collectable
 
         if (_sampleCount <= _shatterCount)
         {
-            Debug.Log($"<color=#00FFFF>SHATTER ATTEMPT</color>");
+            Debug.Log($"<color=#00FFFF>SHATTER ATTEMPT: {_sampleCount}</color>");
             int sampleCount = _sampleCount;
             for (int i = 0; i < sampleCount; i++)
             {
@@ -56,7 +56,6 @@ public class Sample : Collectable
                 }
                 CoroutineManager.Instance.StartCoroutine(AddOreCount(_sampleCount));
                 //AddOreCount(_sampleCount);
-                _sampleCount--;
             }
 
 
@@ -69,6 +68,8 @@ public class Sample : Collectable
             if (Player.PlayerInstance.GetItemIndexFromID(itemID) > -1)
             {
                 Debug.Log($"<color=#0000FF>ADDED</color>");
+
+                _sampleCount--;
                 CoroutineManager.Instance.StartCoroutine(AddOreCount(_sampleCount));
                 //AddOreCount(_sampleCount);
                 
@@ -79,14 +80,15 @@ public class Sample : Collectable
     //private IEnumerator AddOreCount(int sample)
     private IEnumerator AddOreCount(int sample)
     {
+        //Start 0.1 second animation of collection
+        
         yield return new WaitForSeconds(0.1f);
 
         if (Player.PlayerInstance.AddItemIDToInventory(itemID))
         {
             Debug.Log($"Added {itemID}, Sample: {sample}.");
-            _sampleCount--;
         }
-
+        
     }
     
     public bool TakeDamage(float damage)
