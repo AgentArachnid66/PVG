@@ -93,8 +93,6 @@ namespace Leap {
       z = vector.z;
     }
 
-
-
     /// <summary>
     /// The distance between the point represented by this Vector
     /// object and a point represented by the specified Vector object.

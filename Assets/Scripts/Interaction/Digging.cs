@@ -55,13 +55,15 @@ public class Digging : MonoBehaviour
     private Hand hands;
 
     // Bool to determine if the player wants to use 2 different beams or combine them for the more powerful version
-    private bool combine;
+    public bool combine;
 
     private HandData leftHand;
     private HandData rightHand;
 
     public Sample activeSample;
 
+    public float debugLineLength;
+    
     private void Start()
     {
         customEvents.UpdateLaser.AddListener(UpdateBeamInfo);
@@ -81,8 +83,20 @@ public class Digging : MonoBehaviour
             // Then check if the player has both hands as lasers
             if (hands == Hand.Both)
             {
+                Vector3 pointDist = (rightHand.location + (rightHand.orientation * debugLineLength)) - (leftHand.location +
+                    (leftHand.orientation * debugLineLength));
                 // If the dot is close to -1 then the hands are facing each other
-                combine = Vector3.Dot(leftHand.orientation.normalized, rightHand.orientation.normalized) <= -0.95;
+                combine = Vector3.Dot(leftHand.orientation.normalized, rightHand.orientation.normalized) <= -0.75 && pointDist.magnitude < handDist.magnitude;
+
+                //Debug.DrawLine(rightHand.location, rightHand.location + (rightHand.orientation * debugLineLength), Color.black); 
+                //Debug.DrawLine(leftHand.location, leftHand.location + (leftHand.orientation * debugLineLength), Color.black); 
+                // Add a scalar*direction of the hands to the position of the hand to each one
+                // If the distance between these points is less than the distance between the hands
+                // then the hands are facing each other .
+                // Else the hands are in an incorrect orientation.
+                
+                Debug.LogWarning(leftHand.location.ToString() + " : " +debugLineLength);
+                Debug.LogWarning(rightHand.location);
                 if (combine)
                 {
                     // If we want to combine, then we can calculate the power using the distance between the hands
@@ -124,7 +138,7 @@ public class Digging : MonoBehaviour
             for (int i = 0; i < laserDir.Length; i++)
             {
                 Ray ray = new Ray(laserPos[i], laserDir[i]);
-                Debug.DrawLine(laserPos[i], laserDir[i] * 500f);
+                //Debug.DrawLine(laserPos[i], laserDir[i] * 500f);
 
                 
                 if (Physics.Raycast(ray, out hit, float.MaxValue, mask))
@@ -158,6 +172,13 @@ public class Digging : MonoBehaviour
         }
     }
 
+    private void OnDrawGizmos()
+    {
+
+        //(rightHand.location + (rightHand.orientation * 0.25f) -
+        //   leftHand.location + (leftHand.orientation * 0.25f)).magnitude < handDist.magnitude;
+    }
+
     private IEnumerator ResetCooldown()
     {
         yield return new WaitForSeconds(_cooldown);
@@ -168,19 +189,20 @@ public class Digging : MonoBehaviour
     {
         if (hands != Hand.None)
         {
+            ;
             if (isLeft)
             {
-                leftHand.location = handPosition;
+                leftHand.location = handPosition + rig.position;
                 leftHand.orientation = handOrientation;
                 
             }
             else
             {
-                rightHand.location = handPosition;
+                rightHand.location = handPosition+ rig.position;
                 rightHand.orientation = handOrientation;
             }
-            //Color colour = hands == (isLeft ? Hand.Left : Hand.Right) || hands == Hand.Both ? Color.green : Color.red;
-            //Debug.DrawLine(handPosition, handPosition + (handOrientation * 500), colour);
+            Color colour = hands == (isLeft ? Hand.Left : Hand.Right) || hands == Hand.Both ? Color.green : Color.red;
+            Debug.DrawLine(handPosition, handPosition + (handOrientation * 500), colour);
 
 
         }

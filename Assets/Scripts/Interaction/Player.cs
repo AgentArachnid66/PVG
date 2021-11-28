@@ -41,8 +41,8 @@ public class Player : MonoBehaviour
     public float ejectionMultiplier;  
     public Rigidbody test;
 
-    public Transform leftTest;
-    public Transform rightTest;
+    //public Transform leftTest;
+    //public Transform rightTest;
     void Start()
     {
         // Set up so that when the player presses the right button, it will activate the thrusters and when they release it, they will stop.
@@ -58,7 +58,7 @@ public class Player : MonoBehaviour
         });
         
         // Leap Motion
-        customEvents.UpdateHandPosition.AddListener(LeapUpdateThrusterPosition);
+        //customEvents.UpdateHandPosition.AddListener(LeapUpdateThrusterPosition);
 
 
         customEvents.AddScore.AddListener(AddScore);
@@ -74,8 +74,8 @@ public class Player : MonoBehaviour
         // If the dot product of the menu's forward vector and the player's forward vector is above 0.98 then open the menu
         //Debug.Log(Vector3.Dot(menu.transform.forward, transform.forward));
 
-        customEvents.UpdateLaser.Invoke(true, leftTest.forward, leftTest.position);
-        customEvents.UpdateLaser.Invoke(false, rightTest.forward, rightTest.position);
+        //customEvents.UpdateLaser.Invoke(true, leftTest.forward, leftTest.position);
+        //customEvents.UpdateLaser.Invoke(false, rightTest.forward, rightTest.position);
 
     }
 

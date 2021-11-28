@@ -14,6 +14,8 @@ public class DataHandler : MonoBehaviour
     public Transform origin;
     public float radius = 5;
     
+    
+    
     public CustomEvents customEvents;
    //public 
     public void Update()
@@ -21,12 +23,12 @@ public class DataHandler : MonoBehaviour
         //Debug.Log("Controller is " + (controller.IsConnected ? "Connected" : "not Connected"));
         
         frame = controller.Frame();
+
         ProcessLeapData();
+        //controller.FrameReady += ProcessLeapData;
+
     }
-
-
-
-
+    
     /*
     void Awake()
     {
@@ -56,15 +58,15 @@ public class DataHandler : MonoBehaviour
     {
     }
 
-    void ProcessLeapData()
+    void ProcessLeapData(object obj, FrameEventArgs frameArgs)
     {
 
+        frame = frameArgs.frame;
         // So this function will take the Leap Frame data and convert it into an array of floats to be sent over
         // the LSL streams and to be used in my other scripts.
 
-        foreach(Leap.Hand hand in frame.Hands){
+        foreach(Leap.Hand hand in frameArgs.frame.Hands){
             string id = hand.IsLeft ? "Left Hand Position: " : "Right Hand Position: ";
-            //Debug.Log( id + hand.PalmPosition.ToString());
 
             customEvents.UpdateHandPosition.Invoke(hand.IsLeft, hand.PalmPosition);
 
@@ -76,7 +78,25 @@ public class DataHandler : MonoBehaviour
         }
 
     }
+    
+    void ProcessLeapData()
+    {
+        // So this function will take the Leap Frame data and convert it into an array of floats to be sent over
+        // the LSL streams and to be used in my other scripts.
 
+        foreach(Leap.Hand hand in frame.Hands){
+            string id = hand.IsLeft ? "Left Hand Position: " : "Right Hand Position: ";
+
+            customEvents.UpdateHandPosition.Invoke(hand.IsLeft, hand.PalmPosition);
+
+            customEvents.UpdateLaser.Invoke(hand.IsLeft, CustomUtility.LeapVectorToUnityVector3(hand.PalmNormal), (CustomUtility.LeapVectorToUnityVector3(hand.PalmPosition) + origin.position));
+
+
+            //Debug.Log(origin.position + hand.PalmPosition.ToVector3());
+            
+        }
+
+    }
 
 
 }
