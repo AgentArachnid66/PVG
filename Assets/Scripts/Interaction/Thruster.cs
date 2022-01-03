@@ -19,16 +19,37 @@ public class Thruster : MonoBehaviour
     private Hand hands;
     private Vector3 leftOrigin;
     private Vector3 rightOrigin;
-    //private Vector3 
+
+
+    public Lever leftControl;
+    public Lever rightControl;
+
+    // Only dealing with rotation around the Y axis in the
+    // demo to keep things simple
+    public float currRotation;
+    public float currSum;
+    private Vector3 rot;
+
     void Start()
     {
         m_Rigidbody = GetComponent<Rigidbody>();
+        /*
+          leftControl.OnUpdateLever.AddListener((float result) =>
+        {
+            UpdateThrusterValues(result, true);
+        });
+
+        rightControl.OnUpdateLever.AddListener((float result) =>
+        {
+            UpdateThrusterValues(result, false);
+        });
+        */
     }
 
     void Update()
     {
         // Ideally would like to move away from doing this every frame
-        UpdateThrusterPower();
+        UpdateThrusters();
         Debug.Log("Activate: " + activate.ToString() + " and isActive: " + isActive.ToString());
 
     }
@@ -44,12 +65,16 @@ public class Thruster : MonoBehaviour
 
 
             // NEW METHOD
+            // Controlling clockwise and anti clockwise rotation, with the sum of the distance vectors as the power behind it
+            // So the player can turn around and immediately go forward with intuitive ease
+            
 
             // Get the distance from their original positions and use that in the power calculations
             Vector3 distanceA = hands.Equals(Hand.Both) | hands.Equals(Hand.Left) ? leftThruster.transform.position - leftOrigin : Vector3.zero;
             Vector3 distanceB = hands.Equals(Hand.Both) | hands.Equals(Hand.Right) ? rightThruster.transform.position - rightOrigin : Vector3.zero;
         
 
+            // Convert the distance vector to a rotation using the min and max values to lerp between a min and max rotation
 
 
             // Projects the distance of the thrusters onto the orientation of the thrusters
@@ -81,5 +106,41 @@ public class Thruster : MonoBehaviour
 
     }
 
-    
+
+
+
+    // Retrieves the relevant values in use for the thrusters
+    void UpdateThrusterValues(float rotationPower, bool clockwise)
+    {
+        if ((activate && isActive) || overrideActive)
+        {
+            // So it'll add a certain rotation to the vehicle, but based on the percentage
+            // it'll also move it forward at a certain rate.
+
+            // Rotation = Sum of clockwise and anticlockwise
+            // Forward Velocity = Sum of Rotation Power (clamped between 0 and max power)
+
+            // This method allows for better maneuverability
+            rot = m_Rigidbody.transform.rotation.eulerAngles;
+            rot.y += clockwise ? rotationPower : (rotationPower * -1);
+            currRotation = rot.y;
+            currSum += rotationPower;
+            currSum = Mathf.Clamp(currSum, 0, maxPower);
+
+        }
+    }
+
+    void UpdateThrusters()
+    {
+        rot = m_Rigidbody.transform.rotation.eulerAngles;
+        rot.y += currRotation;
+        m_Rigidbody.MoveRotation(Quaternion.Euler(rot));
+
+        m_Rigidbody.MovePosition(m_Rigidbody.position + (m_Rigidbody.transform.forward * currSum));
+
+        // Resets the currSum at the end of the frame, ready for 
+        // the next update
+        currSum = 0;
+        
+    }
 }

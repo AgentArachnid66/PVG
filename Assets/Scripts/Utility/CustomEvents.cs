@@ -159,6 +159,10 @@ public class UnityEventPosOrient : UnityEvent<bool, Vector3, Vector3>
 {
 }
 
+public class UnityEventFloat : UnityEvent<float>
+{
+}
+
 [System.Serializable]
 public struct SampleData
 {
