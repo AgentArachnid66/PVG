@@ -50,7 +50,7 @@ public class Thruster : MonoBehaviour
     {
         // Ideally would like to move away from doing this every frame
         UpdateThrusters();
-        Debug.Log("Activate: " + activate.ToString() + " and isActive: " + isActive.ToString());
+        //Debug.Log("Activate: " + activate.ToString() + " and isActive: " + isActive.ToString());
 
     }
 

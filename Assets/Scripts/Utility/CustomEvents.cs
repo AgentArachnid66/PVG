@@ -32,11 +32,15 @@ public class CustomEvents : MonoBehaviour
 
     public UnityEvent spawnItems = new UnityEvent();
 
+    
+
     public UnityEventBool toggleThrusters = new UnityEventBool();
 
     public UnityEventMode switchMode = new UnityEventMode();
 
     public UnityEventInt AddScore = new UnityEventInt();
+
+    public UnityEventInt UpdateInventoryIndex = new UnityEventInt();
 
     public UnityEventLeapVector UpdateHandPosition = new UnityEventLeapVector();
 
