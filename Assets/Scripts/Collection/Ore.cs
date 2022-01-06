@@ -81,11 +81,13 @@ public class Ore : Sample
         //Start 0.1 second animation of collection
 
         //yield return new WaitForSeconds(0.1f);
-
-        if (Player.PlayerInstance.AddItemIDToInventory(itemID))
+        if (Player.PlayerInstance.dig.currOutput >= minPower)
         {
-            Debug.Log($"Added {itemID}, Sample: {sample}.");
-            _sampleCount--;
+            if (Player.PlayerInstance.AddItemIDToInventory(itemID))
+            {
+                Debug.Log($"Added {itemID}, Sample: {sample}.");
+                _sampleCount--;
+            }
         }
 
     }

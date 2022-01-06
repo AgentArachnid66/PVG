@@ -2,23 +2,24 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
+[ExecuteInEditMode]
 public class Thruster : MonoBehaviour
 {
-    public GameObject leftThruster;
-    public GameObject rightThruster;
-
+ 
     public float maxPower;
+    public float rotationMultiplier;
 
     private Rigidbody m_Rigidbody;
 
     
     private bool activate;
-    public bool overrideActive;
     public bool isActive;
 
+    // For Testing Purposes to ensure that this is working
+    public bool overrideActive;
+
     private Hand hands;
-    private Vector3 leftOrigin;
-    private Vector3 rightOrigin;
 
 
     public Lever leftControl;
@@ -26,14 +27,22 @@ public class Thruster : MonoBehaviour
 
     // Only dealing with rotation around the Y axis in the
     // demo to keep things simple
-    public float currRotation;
-    public float currSum;
+    private float currRotation;
+    private float currSum;
     private Vector3 rot;
+
+    private Vector3 clockwiseVector;
+    private Vector3 anticlockwiseVector;
+
+
+    public float testRot;
+    public float testSum;
+    public float dot;
 
     void Start()
     {
         m_Rigidbody = GetComponent<Rigidbody>();
-        /*
+        
           leftControl.OnUpdateLever.AddListener((float result) =>
         {
             UpdateThrusterValues(result, true);
@@ -43,7 +52,7 @@ public class Thruster : MonoBehaviour
         {
             UpdateThrusterValues(result, false);
         });
-        */
+        
     }
 
     void Update()
@@ -64,32 +73,29 @@ public class Thruster : MonoBehaviour
             //Vector3 distanceB = hands.Equals(Hand.Both) | hands.Equals(Hand.Right) ? rightThruster.transform.position - transform.position : new Vector3(0f, 0f, 0f);
 
 
-            // NEW METHOD
-            // Controlling clockwise and anti clockwise rotation, with the sum of the distance vectors as the power behind it
-            // So the player can turn around and immediately go forward with intuitive ease
             
 
             // Get the distance from their original positions and use that in the power calculations
-            Vector3 distanceA = hands.Equals(Hand.Both) | hands.Equals(Hand.Left) ? leftThruster.transform.position - leftOrigin : Vector3.zero;
-            Vector3 distanceB = hands.Equals(Hand.Both) | hands.Equals(Hand.Right) ? rightThruster.transform.position - rightOrigin : Vector3.zero;
+            //Vector3 distanceA = hands.Equals(Hand.Both) | hands.Equals(Hand.Left) ? leftThruster.transform.position - leftOrigin : Vector3.zero;
+            //Vector3 distanceB = hands.Equals(Hand.Both) | hands.Equals(Hand.Right) ? rightThruster.transform.position - rightOrigin : Vector3.zero;
         
 
             // Convert the distance vector to a rotation using the min and max values to lerp between a min and max rotation
 
 
             // Projects the distance of the thrusters onto the orientation of the thrusters
-            Vector3 thrusterA = Vector3.Project(distanceA, leftThruster.transform.up);
-            Vector3 thrusterB = Vector3.Project(distanceB, rightThruster.transform.up);
+            //Vector3 thrusterA = Vector3.Project(distanceA, leftThruster.transform.up);
+            //Vector3 thrusterB = Vector3.Project(distanceB, rightThruster.transform.up);
 
 
             // Sums up the resultant vectors to give me the correct output
-            Vector3 result = Vector3.ClampMagnitude((thrusterA + thrusterB), maxPower);
+            //Vector3 result = Vector3.ClampMagnitude((thrusterA + thrusterB), maxPower);
             
 
-            Debug.Log(result);
+            //Debug.Log(result);
 
             // Affects the velocity of the main body
-            m_Rigidbody.velocity = result;
+            //m_Rigidbody.velocity = result;
         }
 
     }
@@ -106,9 +112,6 @@ public class Thruster : MonoBehaviour
 
     }
 
-
-
-
     // Retrieves the relevant values in use for the thrusters
     void UpdateThrusterValues(float rotationPower, bool clockwise)
     {
@@ -121,9 +124,33 @@ public class Thruster : MonoBehaviour
             // Forward Velocity = Sum of Rotation Power (clamped between 0 and max power)
 
             // This method allows for better maneuverability
-            rot = m_Rigidbody.transform.rotation.eulerAngles;
-            rot.y += clockwise ? rotationPower : (rotationPower * -1);
-            currRotation = rot.y;
+
+
+            //rot = m_Rigidbody.transform.rotation.eulerAngles;
+            //rot.y += clockwise ? rotationPower : (rotationPower * -1);
+            //currRotation = rot.y;
+
+            // Alternative Method
+            // Get the Dot product between the current forward vector 
+            // and the vector with the rotation applied
+            // Use the product of this and a multiplier as the Delta rotation 
+
+            Debug.Log(clockwise.ToString() + " Rotation: " + Mathf.Lerp(-90, 90, rotationPower).ToString());
+
+            // Rotates the forward vector by the current Rotation
+            if (clockwise)
+            {
+                clockwiseVector = Quaternion.Euler(0,Mathf.Lerp(-90, 90, rotationPower), 0) * m_Rigidbody.transform.forward;
+                //Debug.DrawLine(m_Rigidbody.transform.position, m_Rigidbody.transform.position + clockwiseVector * 500);
+            }
+            else
+            {
+                anticlockwiseVector = Quaternion.Euler(0,Mathf.Lerp(-90, 90, 1-rotationPower), 0) * m_Rigidbody.transform.forward;
+                //Debug.DrawLine(m_Rigidbody.transform.position, m_Rigidbody.transform.position + anticlockwiseVector * 500);
+            }
+
+
+
             currSum += rotationPower;
             currSum = Mathf.Clamp(currSum, 0, maxPower);
 
@@ -132,7 +159,14 @@ public class Thruster : MonoBehaviour
 
     void UpdateThrusters()
     {
-        rot = m_Rigidbody.transform.rotation.eulerAngles;
+        // Finds the Dot Product between the sum of the rotation vectors and the transform's forward vector
+        dot = Vector3.Dot((clockwiseVector + anticlockwiseVector).normalized, m_Rigidbody.transform.forward);
+
+        // Since the Dot Product would be 1 when they are parallel (ie player doesn't want to rotate)
+        // and 0 when they are at 90 degrees (ie player wants to do a sharper turn)
+        // take 1 minus the dot to get the intended results then multiply by a float to easily control the output
+        currRotation =(1- dot) * rotationMultiplier;
+        rot = m_Rigidbody.rotation.eulerAngles;
         rot.y += currRotation;
         m_Rigidbody.MoveRotation(Quaternion.Euler(rot));
 
@@ -140,7 +174,12 @@ public class Thruster : MonoBehaviour
 
         // Resets the currSum at the end of the frame, ready for 
         // the next update
-        currSum = 0;
+        currSum = 0f;
         
+    }
+
+    private void OnDrawGizmos()
+    {
+
     }
 }

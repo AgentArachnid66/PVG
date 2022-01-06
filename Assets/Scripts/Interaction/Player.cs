@@ -24,7 +24,9 @@ public class Player : MonoBehaviour
     
     public int points;
     public CustomEvents customEvents;
-    public GameObject menu;
+
+    // Menu Objects Array
+    public UI_Menu[] menus = new UI_Menu[2];
     public Thruster thruster;
     public Digging dig;
 
@@ -58,6 +60,7 @@ public class Player : MonoBehaviour
         });
         
         // Leap Motion
+        // I think this line is unnecessary and safe to delete but I'm not sure so it will remain for now
         //customEvents.UpdateHandPosition.AddListener(LeapUpdateThrusterPosition);
 
 
@@ -71,8 +74,7 @@ public class Player : MonoBehaviour
 
     void Update()
     {
-        // If the dot product of the menu's forward vector and the player's forward vector is above 0.98 then open the menu
-        //Debug.Log(Vector3.Dot(menu.transform.forward, transform.forward));
+        
 
         //customEvents.UpdateLaser.Invoke(true, leftTest.forward, leftTest.position);
         //customEvents.UpdateLaser.Invoke(false, rightTest.forward, rightTest.position);
@@ -111,6 +113,13 @@ public class Player : MonoBehaviour
 
             case Mode.Collection:
                 break;
+
+            case Mode.Menu:
+                foreach (UI_Menu ui in menus)
+                {
+                    ui.OnSwitchedMenu(hand, true);
+                }
+                break;
         }
     }
 
@@ -139,9 +148,9 @@ public class Player : MonoBehaviour
     void LeapUpdateThrusterPosition(bool isLeft, Leap.Vector position)
     {
         Vector3 unityPosition = CustomUtility.LeapVectorToUnityVector3(position);
-        GameObject active = isLeft ? thruster.leftThruster : thruster.rightThruster;
+        //GameObject active = isLeft ? thruster.leftThruster : thruster.rightThruster;
 
-        active.transform.position = unityPosition;
+        //active.transform.position = unityPosition;
     }
 
     void LeapUpdateLaser()

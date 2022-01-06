@@ -9,6 +9,11 @@ public class Sample : Collectable
     public int healthSegments = 5;
 
     private bool canBeDamaged = true;
+
+    // Minimum amount of power required to break this sample
+    public float minPower;
+
+
     void OnCollisionEnter(Collision other)
     {
         Market market = other.gameObject.GetComponent<Market>();
@@ -40,7 +45,7 @@ public class Sample : Collectable
     protected virtual void AddOreCount(int sample)
     {
         //Start 0.1 second animation of collection
-        
+
         //yield return new WaitForSeconds(0.1f);
 
         if (Player.PlayerInstance.AddItemIDToInventory(itemID))
@@ -48,6 +53,7 @@ public class Sample : Collectable
             Debug.Log($"Added {itemID}, Sample: {sample}.");
             //_sampleCount--;
         }
+
 
     }
     

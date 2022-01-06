@@ -126,7 +126,8 @@ public enum Mode
     Thruster,
     Weapon,
     Hand,
-    Collection
+    Collection,
+    Menu
 }
 
 [System.Serializable]

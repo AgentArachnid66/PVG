@@ -18,9 +18,12 @@ public class Node : Sample
 
     protected override void AddOreCount(int sample)
     {
-        if (Player.PlayerInstance.AddItemIDToInventory(itemID))
+        if (Player.PlayerInstance.dig.currOutput >= minPower)
         {
-            Debug.Log($"Added {itemID}, Sample: {sample}.");
+            if (Player.PlayerInstance.AddItemIDToInventory(itemID))
+            {
+                Debug.Log($"Added {itemID}, Sample: {sample}.");
+            }
         }
     }
 

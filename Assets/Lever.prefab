@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 5223720403368121781}
   - component: {fileID: 5223720403368121778}
   - component: {fileID: 5223720403368121779}
+  - component: {fileID: 7818902691201273651}
   m_Layer: 0
   m_Name: Lever
   m_TagString: Untagged
@@ -62,7 +63,7 @@ HingeJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: -0.2196404, y: 1.1739999, z: 0.5313497}
+  m_ConnectedAnchor: {x: -0.1810628, y: -0.094028905, z: 0.0043497086}
   m_UseSpring: 0
   m_Spring:
     spring: 0
@@ -116,6 +117,24 @@ MonoBehaviour:
     layerIndex: 0
   _eventTable:
     _entries: []
+--- !u!114 &7818902691201273651
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5223720403368121777}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 55c41a3512e7f9f4787c2068ede034fe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  min: {x: -1, y: 0, z: 0}
+  max: {x: 1, y: 0, z: 0}
+  originOffset: {x: 0, y: -0.35, z: 0}
+  position: {fileID: 5223720403887841789}
+  currAngle: 0
+  currPercent: 0
 --- !u!1 &5223720403459973260
 GameObject:
   m_ObjectHideFlags: 0
