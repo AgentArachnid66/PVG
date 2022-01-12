@@ -22,8 +22,9 @@ public class Thruster : MonoBehaviour
     private Hand hands;
 
 
-    public Lever leftControl;
-    public Lever rightControl;
+    public Leap.Unity.Interaction.InteractionSlider leftControl;
+    public Leap.Unity.Interaction.InteractionSlider rightControl;
+
 
     // Only dealing with rotation around the Y axis in the
     // demo to keep things simple
@@ -43,16 +44,26 @@ public class Thruster : MonoBehaviour
     {
         m_Rigidbody = GetComponent<Rigidbody>();
         
-          leftControl.OnUpdateLever.AddListener((float result) =>
+
+        // Had to update the Slider code in the Plugin to make this event public in order for 
+        // me to be able to add this as a listener to optimise this script
+          leftControl._horizontalSlideEvent.AddListener((float result) =>
         {
             UpdateThrusterValues(result, true);
         });
 
-        rightControl.OnUpdateLever.AddListener((float result) =>
+        rightControl._horizontalSlideEvent.AddListener((float result) =>
         {
             UpdateThrusterValues(result, false);
         });
         
+    }
+
+    
+
+    public void UpdateClockwise(float result)
+    {
+
     }
 
     void Update()

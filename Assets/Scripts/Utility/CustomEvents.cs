@@ -46,7 +46,15 @@ public class CustomEvents : MonoBehaviour
 
     public UnityEventPosOrient UpdateLaser = new UnityEventPosOrient();
 
+    private void Start()
+    {
+        switchMode.AddListener(testSwitch);
+    }
 
+    void testSwitch(Mode mode, Hand hand)
+    {
+        Debug.LogWarning("Switched to " + mode.ToString() + " on the " + hand.ToString() + " hand");
+    }
 
     public bool test;
 

@@ -27,5 +27,9 @@ public class UI_Screen : MonoBehaviour
         renderer.material.mainTexture = target;
     }
 
+    public void test(string single)
+    {
+        Debug.Log(single);
+    }
 
 }

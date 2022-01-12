@@ -87,7 +87,7 @@ namespace Leap.Unity.Interaction {
     ///<summary> Triggered while this slider is depressed. </summary>
     [SerializeField]
     [FormerlySerializedAs("horizontalSlideEvent")]
-    private FloatEvent _horizontalSlideEvent = new FloatEvent();
+    public FloatEvent _horizontalSlideEvent = new FloatEvent();
 
     [Header("Vertical Axis")]
     public float defaultVerticalValue;
