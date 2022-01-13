@@ -10,7 +10,6 @@ public class DroneHands : MonoBehaviour
     public GameObject leftHand;
     public GameObject rightHand;
     public float distance;
-    public Vector3 origin;
 
 
     // Start is called before the first frame update
@@ -25,7 +24,9 @@ public class DroneHands : MonoBehaviour
 
     void MapHands(bool isLeft, Leap.Vector localLocation, Leap.Vector orientation)
     {
-        Vector3 pos = Vector3.zero;
+        Vector3 pos = MapHand(localLocation, orientation);
+
+        Debug.Log("Mapping Hands");
 
         if (isLeft)
         {
@@ -40,8 +41,8 @@ public class DroneHands : MonoBehaviour
 
     Vector3 MapHand(Vector location, Vector orientation)
     {
-        Vector3 newPos = CustomUtility.LeapVectorToUnityVector3(location) * distance;
-        return (newPos + origin);
+        Vector3 newPos = CustomUtility.LeapVectorToUnityVector3(location * distance);
+        return (newPos + transform.position);
     }
 
 }

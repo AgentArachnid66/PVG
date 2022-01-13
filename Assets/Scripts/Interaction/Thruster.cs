@@ -30,6 +30,7 @@ public class Thruster : MonoBehaviour
     // demo to keep things simple
     private float currRotation;
     private float currSum;
+    private float prevSum;
     private Vector3 rot;
 
     private Vector3 clockwiseVector;
@@ -152,19 +153,17 @@ public class Thruster : MonoBehaviour
             // Rotates the forward vector by the current Rotation
             if (clockwise)
             {
-                clockwiseVector = Quaternion.Euler(0,Mathf.Lerp(-90, 90, rotationPower), 0) * m_Rigidbody.transform.forward;
+                clockwiseVector = Quaternion.Euler(0,Mathf.Lerp(-90, 90, rotationPower), 0) * m_Rigidbody.transform.forward * rotationPower;
                 //Debug.DrawLine(m_Rigidbody.transform.position, m_Rigidbody.transform.position + clockwiseVector * 500);
             }
             else
             {
-                anticlockwiseVector = Quaternion.Euler(0,Mathf.Lerp(-90, 90, 1-rotationPower), 0) * m_Rigidbody.transform.forward;
+                anticlockwiseVector = Quaternion.Euler(0,Mathf.Lerp(-90, 90, 1-rotationPower), 0) * m_Rigidbody.transform.forward* rotationPower;
                 //Debug.DrawLine(m_Rigidbody.transform.position, m_Rigidbody.transform.position + anticlockwiseVector * 500);
             }
 
 
 
-            currSum += rotationPower;
-            currSum = Mathf.Clamp(currSum, 0, maxPower);
 
         }
     }
@@ -182,11 +181,13 @@ public class Thruster : MonoBehaviour
         rot.y += currRotation;
         m_Rigidbody.MoveRotation(Quaternion.Euler(rot));
 
+        currSum = Mathf.Clamp(clockwiseVector.magnitude + anticlockwiseVector.magnitude, 0, maxPower);
+
         m_Rigidbody.MovePosition(m_Rigidbody.position + (m_Rigidbody.transform.forward * currSum));
 
         // Resets the currSum at the end of the frame, ready for 
         // the next update
-        currSum = 0f;
+
         
     }
 
