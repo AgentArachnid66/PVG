@@ -32,8 +32,6 @@ public class CustomEvents : MonoBehaviour
 
     public UnityEvent spawnItems = new UnityEvent();
 
-    
-
     public UnityEventBool toggleThrusters = new UnityEventBool();
 
     public UnityEventMode switchMode = new UnityEventMode();
@@ -42,7 +40,7 @@ public class CustomEvents : MonoBehaviour
 
     public UnityEventInt UpdateInventoryIndex = new UnityEventInt();
 
-    public UnityEventLeapVector UpdateHandPosition = new UnityEventLeapVector();
+    public UnityEventLeapPosOrient UpdateHandPosition = new UnityEventLeapPosOrient();
 
     public UnityEventPosOrient UpdateLaser = new UnityEventPosOrient();
 
@@ -119,7 +117,8 @@ public class CustomEvents : MonoBehaviour
 
     }
 }
-  
+
+#region Custom Event Types  
 
 [System.Serializable]
 public class UnityEventBool : UnityEvent<bool>
@@ -127,24 +126,9 @@ public class UnityEventBool : UnityEvent<bool>
 
 }
 
-[System.Serializable]
-public enum Mode
+public class UnityEventLeapPosOrient :UnityEvent<bool, Leap.Vector, Leap.Vector>
 {
-    None,
-    Thruster,
-    Weapon,
-    Hand,
-    Collection,
-    Menu
-}
 
-[System.Serializable]
-public enum Hand
-{
-    None,
-    Left,
-    Right,
-    Both
 }
 
 public class UnityEventMode : UnityEvent<Mode, Hand>
@@ -175,6 +159,42 @@ public class UnityEventPosOrient : UnityEvent<bool, Vector3, Vector3>
 public class UnityEventFloat : UnityEvent<float>
 {
 }
+
+#endregion
+
+#region Custom Enums
+
+[System.Serializable]
+public enum Mode
+{
+    None,
+    Thruster,
+    Weapon,
+    Hand,
+    Collection,
+    Menu
+}
+
+[System.Serializable]
+public enum Hand
+{
+    None,
+    Left,
+    Right,
+    Both
+}
+
+[System.Serializable]
+public enum NodeType
+{
+    Unpure,
+    Normal,
+    Pure
+}
+
+#endregion
+
+#region Custom Structs
 
 [System.Serializable]
 public struct SampleData
@@ -238,15 +258,9 @@ public struct HandData
 }
 
 [System.Serializable]
-public enum NodeType
-{
-    Unpure,
-    Normal,
-    Pure
-}
-
-[System.Serializable]
 public struct NodeData
 {
     public NodeType type;
 }
+
+#endregion

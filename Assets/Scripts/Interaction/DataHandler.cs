@@ -58,26 +58,6 @@ public class DataHandler : MonoBehaviour
     {
     }
 
-    void ProcessLeapData(object obj, FrameEventArgs frameArgs)
-    {
-
-        frame = frameArgs.frame;
-        // So this function will take the Leap Frame data and convert it into an array of floats to be sent over
-        // the LSL streams and to be used in my other scripts.
-
-        foreach(Leap.Hand hand in frameArgs.frame.Hands){
-            string id = hand.IsLeft ? "Left Hand Position: " : "Right Hand Position: ";
-
-            customEvents.UpdateHandPosition.Invoke(hand.IsLeft, hand.PalmPosition);
-
-            customEvents.UpdateLaser.Invoke(hand.IsLeft, CustomUtility.LeapVectorToUnityVector3(hand.PalmNormal), CustomUtility.LeapVectorToUnityVector3(hand.PalmPosition));
-
-
-            //Debug.Log(origin.position + hand.PalmPosition.ToVector3());
-            
-        }
-
-    }
     
     void ProcessLeapData()
     {
@@ -87,9 +67,9 @@ public class DataHandler : MonoBehaviour
         foreach(Leap.Hand hand in frame.Hands){
             string id = hand.IsLeft ? "Left Hand Position: " : "Right Hand Position: ";
 
-            customEvents.UpdateHandPosition.Invoke(hand.IsLeft, hand.PalmPosition);
+            customEvents.UpdateHandPosition.Invoke(hand.IsLeft, hand.PalmPosition, hand.PalmNormal);
 
-            customEvents.UpdateLaser.Invoke(hand.IsLeft, CustomUtility.LeapVectorToUnityVector3(hand.PalmNormal), (CustomUtility.LeapVectorToUnityVector3(hand.PalmPosition) + origin.position));
+            //customEvents.UpdateLaser.Invoke(hand.IsLeft, CustomUtility.LeapVectorToUnityVector3(hand.PalmNormal), (CustomUtility.LeapVectorToUnityVector3(hand.PalmPosition) + origin.position));
 
 
             //Debug.Log(origin.position + hand.PalmPosition.ToVector3());

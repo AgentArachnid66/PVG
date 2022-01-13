@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Windows.Speech;
@@ -9,7 +10,6 @@ public class SpeechEngine : MonoBehaviour
 {
 
     public ConfidenceLevel confidence = ConfidenceLevel.Low;
-
     public CustomEvents customEvents;
 
     protected GrammarRecognizer grammarRecognizer;
@@ -27,15 +27,32 @@ public class SpeechEngine : MonoBehaviour
             grammarRecognizer.Stop();
             grammarRecognizer.Dispose();
         }
+        
+        string directory = Application.streamingAssetsPath;
+        string fileName = "/GrammarFile.xml";
+        if (Directory.Exists(directory))
+        {
 
-        Debug.Log(Application.dataPath + "/Scripts/Interaction/Speech/GrammarFile.xml");
+            if (File.Exists(directory + fileName))
+            {
+                grammarRecognizer = new GrammarRecognizer(directory + fileName, confidence);
+                grammarRecognizer.OnPhraseRecognized += GrammarRecognizer_OnPhraseRecognized;
+                grammarRecognizer.Start();
 
-        grammarRecognizer = new GrammarRecognizer(Application.dataPath + "/Scripts/Interaction/Speech/GrammarFile.xml", confidence);
-        grammarRecognizer.OnPhraseRecognized += GrammarRecognizer_OnPhraseRecognized;
-        grammarRecognizer.Start();
-
-        if (grammarRecognizer.IsRunning)
-            Debug.Log("Start - grammarRecognizer is running from file: " + grammarRecognizer.GrammarFilePath);
+                if (grammarRecognizer.IsRunning)
+                {
+                    Debug.Log("Start - grammarRecognizer is running from file: " + grammarRecognizer.GrammarFilePath);
+                }
+            }
+            else
+            {
+                Debug.Log("File not found.");
+            }
+        }
+        else
+        {
+            Debug.Log("Directory not found.");
+        }        
     }
 
     private void PhraseRecognitionSystem_OnError(SpeechError errorCode)
@@ -53,9 +70,11 @@ public class SpeechEngine : MonoBehaviour
     {
         Debug.Log("Phrase Recognised");
         word = args.text;
+        
         SemanticMeaning[] meanings = args.semanticMeanings;
         foreach (SemanticMeaning item in meanings)
         {
+            Debug.Log(item.ToString());
             Debug.Log(item.key);
             Debug.Log(item.values);
         }
@@ -77,6 +96,7 @@ public class SpeechEngine : MonoBehaviour
     {
         Hand hand;
         Mode mode;
+        // open left inventory
 
         if (word.Contains("left"))
         {

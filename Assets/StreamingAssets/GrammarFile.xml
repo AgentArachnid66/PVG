@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<grammar xmlns="http://www.w3.org/2001/06/grammar"
+         xml:lang="en-GB"
+         version="1.0" root="rootRule" tag-format="semantics/1.0">
+
+  <!-- ################################################################# -->
+
+  <!-- 	<rule id="rootRule">
+		<one-of>
+			<item> play </item>
+			<item> <ruleref uri="#direction" /> </item>
+		</one-of>
+	</rule>
+  
+    <rule id="direction">
+		<one-of>
+		<item> up </item>
+		<item> down </item>
+		<item> right </item>
+		<item> left </item>
+		</one-of>
+	</rule>
+ -->
+
+  <!-- ################################################################# -->
+
+  <rule id="rootRule">
+    <one-of>
+      <item> <ruleref uri="#hand" /> </item>
+      <item> <ruleref uri="#general" /> </item>
+      <item>
+        <ruleref uri="#actionFirst" />
+      </item>
+    </one-of>
+  </rule>
+
+  <rule id="normal">
+    <one-of>
+      <item>normal</item>
+      <item>hand</item>
+      <item>hands</item>
+    </one-of>
+    <tag>out="normal";</tag>
+  </rule>
+
+  <rule id="thruster">
+    <one-of>
+      <item>thruster</item>
+      <item>thrusters</item>
+      <item>engine</item>
+      <item>engines</item>
+    </one-of>
+    <tag>out="thruster";</tag>
+  </rule>
+  
+  <rule id="digging">
+    <one-of>
+      <item>laser</item>
+      <item>lasers</item>
+    </one-of>
+    <tag>out="digging";</tag>
+  </rule>
+  
+  <rule id="mode">
+    <one-of>
+      <item><ruleref uri="#thruster"/></item>
+      <item><ruleref uri="#normal"/></item>
+      <item><ruleref uri="#digging"/></item>
+      <item>inventory</item>
+    </one-of>
+  </rule>
+  
+  <rule id="hand">
+    <one-of>
+      <item>left</item>
+      <item>right</item>
+      <item>both</item>
+    </one-of>
+  </rule>
+
+  <rule id="UIaction">
+    <one-of>
+      <item>
+        <one-of>
+          <item>open</item>
+        </one-of>
+        <tag>out="open";</tag>
+      </item>
+      <item>
+        <one-of>
+          <item>close</item>
+        </one-of>
+        <tag>out="close";</tag>
+      </item>
+    </one-of>
+  </rule>
+
+  <rule id="mechanicAction">
+    <one-of>
+      <item>
+        <one-of>
+          <item>activate</item>
+          <item>initiate</item>
+          <item>engage</item>
+        </one-of>
+        <tag>out="activate";</tag>
+      </item>
+      <item>
+        <one-of>
+          <item>deactivate</item>
+          <item>disengage</item>
+        </one-of>
+        <tag>out="deactivate";</tag>
+      </item>
+    </one-of>
+  </rule>
+
+  <rule id="action">
+    <one-of>
+      <item>
+        <ruleref uri="#UIaction"/>
+      </item>
+      <item>
+        <ruleref uri="#mechanicAction"/>
+      </item>
+    </one-of>
+  </rule>
+  
+  <rule id="actionFirst">
+    <ruleref uri="#action" />
+    <ruleref uri="#hand" />
+    <ruleref uri="#mode"/>
+  </rule>
+
+  <rule id="general">
+    <ruleref uri="#action"/>
+    <ruleref uri ="#mode"/>
+  </rule>
+  
+
+
+
+</grammar>

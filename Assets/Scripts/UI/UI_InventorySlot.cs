@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Leap.Unity.Interaction;
 
 public class UI_InventorySlot : MonoBehaviour
 {
@@ -17,4 +18,5 @@ public class UI_InventorySlot : MonoBehaviour
         itemName = data.sampleData.collectableData.name;
         text.text = itemName;
     }
+
 }

@@ -192,13 +192,13 @@ public class Digging : MonoBehaviour
             ;
             if (isLeft)
             {
-                leftHand.location = handPosition + rig.position;
+                leftHand.location = handPosition;
                 leftHand.orientation = handOrientation;
                 
             }
             else
             {
-                rightHand.location = handPosition+ rig.position;
+                rightHand.location = handPosition;
                 rightHand.orientation = handOrientation;
             }
             Color colour = hands == (isLeft ? Hand.Left : Hand.Right) || hands == Hand.Both ? Color.green : Color.red;
