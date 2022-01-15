@@ -8,18 +8,6 @@ public class Ore : Sample
     [SerializeField] protected int _shatterCount;
 
 
-    void OnCollisionEnter(Collision other)
-    {
-        Market market = other.gameObject.GetComponent<Market>();
-
-        if (market != null)
-        {
-            market.DepositSample(itemID);
-
-        }
-
-
-    }
 
 
     void Awake()

@@ -16,13 +16,7 @@ public class Sample : Collectable
 
     void OnCollisionEnter(Collision other)
     {
-        Market market = other.gameObject.GetComponent<Market>();
 
-        if(market != null)
-        {
-            market.DepositSample(itemID);
-
-        }
 
     }
 

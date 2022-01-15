@@ -168,10 +168,6 @@ public class Player : MonoBehaviour
 
     #region Score System
 
-    void DepositSample()
-    {
-    }
-
     void AddScore(int deltaScore)
     {
         points += deltaScore;
@@ -180,10 +176,6 @@ public class Player : MonoBehaviour
     #endregion
 
     #region Inventory
-
-    void OnCollisionEnter(Collision other)
-    {
-    }
 
     /// <summary>
     /// Gets the first available index for an item if there isn't a stack already in the inventory. If there is a stack then it returns that
@@ -278,6 +270,7 @@ public class Player : MonoBehaviour
             inventory[index].amount += 1;
             Debug.Log("Just added " + data.name + " to the inventory in slot: " +index.ToString());
             customEvents.UpdateInventoryIndex.Invoke(index);
+            
             return true;
         }
 
@@ -288,7 +281,7 @@ public class Player : MonoBehaviour
     }
     
     // Removes items from the player inventory
-    bool RemoveFromInventory(int index, int amount)
+    public bool RemoveFromInventory(int index, int amount)
     {
         if (index < 0)
         {

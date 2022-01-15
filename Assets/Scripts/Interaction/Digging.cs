@@ -150,7 +150,7 @@ public class Digging : MonoBehaviour
                 {
                     hitTests[i].transform.position = hit.point;
 
-                    Debug.Log($"Object Hit: {hit.collider.gameObject.name}");
+                    //Debug.Log($"Object Hit: {hit.collider.gameObject.name}");
 
                     if (activeSample == null || activeSample.gameObject.GetInstanceID() != hit.collider.gameObject.GetInstanceID())
                     {
@@ -165,7 +165,6 @@ public class Digging : MonoBehaviour
                         {
                             activeSample = null;
                         }
-
                         StartCoroutine(ResetCooldown());
                     }
 

@@ -115,7 +115,7 @@ namespace Tobii.Gaming.Internal
 
 			if (window.Equals(IntPtr.Zero))
 			{
-				UnityEngine.Debug.LogError("Could not find game view!");
+				//UnityEngine.Debug.LogError("Could not find game view!");
 			}
 
 			return window;

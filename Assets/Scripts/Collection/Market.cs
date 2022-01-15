@@ -19,7 +19,8 @@ public class Market : MonoBehaviour
     // Dictionary that takes in an item ID as a key to access how much each is worth
 
     public Dictionary<int, SampleData> samples = new Dictionary<int, SampleData>();
-
+    private int _active;
+    
     [SerializeField]
     public List<MarketData> itemData = new List<MarketData>();
 
@@ -32,17 +33,34 @@ public class Market : MonoBehaviour
         }
 
         CustomEvents.CustomEventsInstance.spawnItems.Invoke();
+        CustomEvents.CustomEventsInstance.UpdateActiveInventoryIndex.AddListener(SetActiveIndex);
     }
 
+    void SetActiveIndex(int index)
+    {
+        _active = index;
+    }
+    public MarketData GetDataFromID(int id)
+    {
+        for (int i = 0; i < itemData.Count; i++)
+        {
+            if (id == itemData[i].sampleData.collectableData.itemID)
+            {
+                return itemData[i];
+            }
+        }
 
+        return new MarketData();
+    }
 
-    public void DepositSample(int itemID)
+    public void DepositSample(InventoryData item)
     {
         SampleData value;
-        if (samples.TryGetValue(itemID, out value))
+        if (samples.TryGetValue(item.item, out value))
         {
-
-            CustomEvents.CustomEventsInstance.AddScore.Invoke(value.points);
+            Debug.Log("Gotten Item and added score");
+            Player.PlayerInstance.RemoveFromInventory(_active, item.amount);
+            CustomEvents.CustomEventsInstance.AddScore.Invoke(value.points * item.amount);
         }
     }
 
