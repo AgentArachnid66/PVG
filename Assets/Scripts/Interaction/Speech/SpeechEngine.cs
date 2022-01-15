@@ -97,42 +97,16 @@ public class SpeechEngine : MonoBehaviour
         Hand hand;
         Mode mode;
         // open left inventory
-
-        if (word.Contains("left"))
+        if (word.Contains("break"))
         {
-            hand = Hand.Left;
-        }
-        else if (word.Contains("right"))
-        {
-            hand = Hand.Right;
-        }
-        else if (word.Contains("both"))
-        {
-            hand = Hand.Both;
-        }
-        else
-        {
-            hand = Hand.None;
+            Debug.Break();
         }
 
-        if (word.Contains("inventory"))
-        {
-            mode = Mode.Menu;
-        }
-        else if (word.Contains("thruster"))
-        {
-            mode = Mode.Thruster;
-        }
-        else if (word.Contains("laser"))
-        {
-            mode = Mode.Collection;
-        }
-        else
-        {
-            mode = Mode.Hand;
-        }
+        
 
-        customEvents.switchMode.Invoke(mode, hand);
+        //customEvents.switchMode.Invoke(mode, hand);
+
+        //Debug.Log("Switched To: " + mode.ToString() + "On The: " + hand.ToString() + " Hand");
     }
 
     private void OnApplicationQuit()

@@ -40,9 +40,13 @@ public class CustomEvents : MonoBehaviour
 
     public UnityEventInt UpdateInventoryIndex = new UnityEventInt();
 
+    public UnityEventInt UpdateActiveInventoryIndex = new UnityEventInt();
+
     public UnityEventLeapPosOrient UpdateHandPosition = new UnityEventLeapPosOrient();
 
     public UnityEventPosOrient UpdateLaser = new UnityEventPosOrient();
+    
+    
 
     private void Start()
     {
@@ -159,6 +163,12 @@ public class UnityEventPosOrient : UnityEvent<bool, Vector3, Vector3>
 public class UnityEventFloat : UnityEvent<float>
 {
 }
+
+public class UnityEventQuaternion : UnityEvent<Quaternion>
+{
+
+}
+
 
 #endregion
 

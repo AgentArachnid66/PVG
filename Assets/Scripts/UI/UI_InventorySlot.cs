@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using Leap.Unity.Interaction;
 
 public class UI_InventorySlot : MonoBehaviour
@@ -11,12 +10,24 @@ public class UI_InventorySlot : MonoBehaviour
     // to retrieve it's data
 
     public string itemName;
-    private Text text;
+    public int index;
+    private TextMesh _text;
+    private CustomEvents _customEvents;
 
+    void Start()
+    {
+        _customEvents = GameObject.Find("Scene Manager").GetComponent<CustomEvents>();
+    }
     public void UpdateSlot(MarketData data)
     {
         itemName = data.sampleData.collectableData.name;
-        text.text = itemName;
+        _text.text = itemName;
+    }
+
+    public void SelectSlot()
+    {
+        // Need to feedback to the inventory controller which slot this is
+        // to set it as the active slot
     }
 
 }

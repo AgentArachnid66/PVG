@@ -11,8 +11,19 @@ namespace Leap
             return new Vector3(-vector.x, -vector.z, vector.y) / 1000f;
         }
 
+        public static Vector3 LeapMapHands(Vector vector)
+        {
+            return new Vector3(vector.x/2.5f, vector.y/5f, -vector.z)/1000f;
+        }
+
+        public static Vector3 LeapMapOrientation(Vector vector)
+        {
+            return new Vector3(vector.x, vector.y, -vector.z);
+        }
+
 
     }
+
 
 
 

@@ -67,7 +67,7 @@ public class Player : MonoBehaviour
         customEvents.AddScore.AddListener(AddScore);
         //customEvents.shootItem.AddListener(ShootItem);
 
-
+        Debug.Log("Player Script active in scene");
 
     }
 
@@ -97,7 +97,6 @@ public class Player : MonoBehaviour
         switch (mode)
         {
             case Mode.None:
-                dig.ToggleBeam(global::Hand.None);
                 break;
 
             case Mode.Thruster:
@@ -105,13 +104,14 @@ public class Player : MonoBehaviour
                 break;
 
             case Mode.Weapon:
-                dig.ToggleBeam(hand);
                 break;
 
             case Mode.Hand:
+                dig.ToggleBeam(global::Hand.None, false);
                 break;
 
             case Mode.Collection:
+                dig.ToggleBeam(hand, true);
                 break;
 
             case Mode.Menu:

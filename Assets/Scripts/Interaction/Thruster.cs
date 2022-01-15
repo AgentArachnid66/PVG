@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-
 [ExecuteInEditMode]
 public class Thruster : MonoBehaviour
 {
@@ -24,7 +23,7 @@ public class Thruster : MonoBehaviour
 
     public Leap.Unity.Interaction.InteractionSlider leftControl;
     public Leap.Unity.Interaction.InteractionSlider rightControl;
-
+    public TextMesh leftThrusterUI;
 
     // Only dealing with rotation around the Y axis in the
     // demo to keep things simple
@@ -33,46 +32,44 @@ public class Thruster : MonoBehaviour
     private float prevSum;
     private Vector3 rot;
 
-    private Vector3 clockwiseVector;
-    private Vector3 anticlockwiseVector;
+    private Vector3 clockwiseVector = Vector3.zero;
+    private Vector3 anticlockwiseVector = Vector3.zero;
 
+    private bool leftActive;
+    private bool rightActive;
 
-
-    public float testRot;
-    public float testSum;
+    
     public float dot;
 
     void Start()
     {
         m_Rigidbody = GetComponent<Rigidbody>();
-        
+
 
         // Had to update the Slider code in the Plugin to make this event public in order for 
         // me to be able to add this as a listener to optimise this script
-          leftControl._horizontalSlideEvent.AddListener((float result) =>
-        {
-            UpdateThrusterValues(result, true);
-        });
 
-        rightControl._horizontalSlideEvent.AddListener((float result) =>
-        {
-            UpdateThrusterValues(result, false);
-        });
         
     }
 
-    
-
-    public void UpdateClockwise(float result)
+    public void UpdateVector(bool isClockwise)
     {
 
+
+        if (isClockwise)
+        {
+            UpdateThrusterValues(leftControl.HorizontalSliderValue, isClockwise);
+        }
+        else
+        {
+            UpdateThrusterValues(rightControl.HorizontalSliderValue, isClockwise);
+        }
     }
 
     void Update()
     {
         // Ideally would like to move away from doing this every frame
         UpdateThrusters();
-        //Debug.Log("Activate: " + activate.ToString() + " and isActive: " + isActive.ToString());
 
     }
 
@@ -116,18 +113,34 @@ public class Thruster : MonoBehaviour
     public void ToggleThrusters(bool activateThrusters)
     {
         activate = activateThrusters;
-        Debug.Log("Toggle Thrusters: " + activateThrusters.ToString());
+        //Debug.Log("Toggle Thrusters: " + activateThrusters.ToString());
     }
     
+    // To switch on or off both engines at once
     public void ToggleActive(bool active)
     {
         isActive = active;
+        leftActive = active;
+        rightActive = active;
+    }
 
+    public void ToggleIndividualThruster(bool isLeft, bool active)
+    {
+        if (isLeft)
+        {
+            leftActive = active;
+        }
+        else
+        {
+            rightActive = active;
+        }
     }
 
     // Retrieves the relevant values in use for the thrusters
     void UpdateThrusterValues(float rotationPower, bool clockwise)
     {
+        
+
         if ((activate && isActive) || overrideActive)
         {
             // So it'll add a certain rotation to the vehicle, but based on the percentage
@@ -148,18 +161,19 @@ public class Thruster : MonoBehaviour
             // and the vector with the rotation applied
             // Use the product of this and a multiplier as the Delta rotation 
 
-            Debug.Log(clockwise.ToString() + " Rotation: " + Mathf.Lerp(-90, 90, rotationPower).ToString());
+            //Debug.Log(clockwise.ToString() + " Rotation: " + Mathf.Lerp(-90, 90, rotationPower).ToString());
 
             // Rotates the forward vector by the current Rotation
             if (clockwise)
             {
-                clockwiseVector = Quaternion.Euler(0,Mathf.Lerp(-90, 90, rotationPower), 0) * m_Rigidbody.transform.forward * rotationPower;
+                clockwiseVector = Quaternion.Euler(0,Mathf.Lerp(-180, 180, rotationPower) , 0) * m_Rigidbody.transform.forward * rotationPower;
                 //Debug.DrawLine(m_Rigidbody.transform.position, m_Rigidbody.transform.position + clockwiseVector * 500);
+                leftThrusterUI.text = Mathf.RoundToInt(leftControl.HorizontalSliderValue * 100f).ToString() + "%";
             }
             else
             {
-                anticlockwiseVector = Quaternion.Euler(0,Mathf.Lerp(-90, 90, 1-rotationPower), 0) * m_Rigidbody.transform.forward* rotationPower;
-                //Debug.DrawLine(m_Rigidbody.transform.position, m_Rigidbody.transform.position + anticlockwiseVector * 500);
+                anticlockwiseVector = Quaternion.Euler(0, Mathf.Lerp(-180, 180, 1-rotationPower), 0) * m_Rigidbody.transform.forward * rotationPower;
+                Debug.DrawLine(m_Rigidbody.transform.position, m_Rigidbody.transform.position + anticlockwiseVector * 500);
             }
 
 
@@ -170,25 +184,28 @@ public class Thruster : MonoBehaviour
 
     void UpdateThrusters()
     {
-        // Finds the Dot Product between the sum of the rotation vectors and the transform's forward vector
-        dot = Vector3.Dot((clockwiseVector + anticlockwiseVector).normalized, m_Rigidbody.transform.forward);
+        if (clockwiseVector != Vector3.zero || anticlockwiseVector != Vector3.zero)
+        {
+            // Finds the Dot Product between the sum of the rotation vectors and the transform's forward vector
+            dot = Vector3.Dot((clockwiseVector + anticlockwiseVector).normalized, m_Rigidbody.transform.forward);
 
-        // Since the Dot Product would be 1 when they are parallel (ie player doesn't want to rotate)
-        // and 0 when they are at 90 degrees (ie player wants to do a sharper turn)
-        // take 1 minus the dot to get the intended results then multiply by a float to easily control the output
-        currRotation =(1- dot) * rotationMultiplier;
-        rot = m_Rigidbody.rotation.eulerAngles;
-        rot.y += currRotation;
-        m_Rigidbody.MoveRotation(Quaternion.Euler(rot));
+            // Since the Dot Product would be 1 when they are parallel (ie player doesn't want to rotate)
+            // and 0 when they are at 90 degrees (ie player wants to do a sharper turn)
+            // take 1 minus the dot to get the intended results then multiply by a float to easily control the output
+            currRotation = (1 - dot) * rotationMultiplier * (clockwiseVector.magnitude > anticlockwiseVector.magnitude ? 1f : -1f);
+            
+            rot = m_Rigidbody.rotation.eulerAngles;
+            rot.y += currRotation;
+            m_Rigidbody.MoveRotation(Quaternion.Euler(rot));
 
-        currSum = Mathf.Clamp(clockwiseVector.magnitude + anticlockwiseVector.magnitude, 0, maxPower);
+            currSum = Mathf.Clamp((clockwiseVector.magnitude + anticlockwiseVector.magnitude) * maxPower, 0, maxPower);
+            currSum = currSum <= 0.05 * maxPower ? 0f : currSum;
 
-        m_Rigidbody.MovePosition(m_Rigidbody.position + (m_Rigidbody.transform.forward * currSum));
 
-        // Resets the currSum at the end of the frame, ready for 
-        // the next update
+            m_Rigidbody.MovePosition(m_Rigidbody.position + (m_Rigidbody.transform.forward * currSum));
 
-        
+
+        }
     }
 
     private void OnDrawGizmos()

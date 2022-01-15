@@ -6,8 +6,8 @@ using UnityEngine;
 public class Digging : MonoBehaviour
 {
     [SerializeField] private float _cooldown = 0.25f;
-    [SerializeField]private bool _isInCooldown;
-    
+    [SerializeField] private bool _isInCooldown;
+
     [SerializeField] private LayerMask mask;
     /*
      * <summary>
@@ -34,7 +34,9 @@ public class Digging : MonoBehaviour
 
 
 
-
+    public GameObject combineTest;
+    public GameObject[] hitTests = new GameObject[2];
+    
     public bool active;
 
     public Transform rig;
@@ -52,18 +54,19 @@ public class Digging : MonoBehaviour
     private Vector3[] laserPos = new Vector3[2];
 
     // Enum that holds which hands are active in this mode
-    private Hand hands;
+    public Hand hands;
 
     // Bool to determine if the player wants to use 2 different beams or combine them for the more powerful version
     public bool combine;
 
-    private HandData leftHand;
-    private HandData rightHand;
+    public HandData leftHand;
+    public HandData rightHand;
 
     public Sample activeSample;
 
     public float debugLineLength;
-    
+    public float testDot;
+
     private void Start()
     {
         customEvents.UpdateLaser.AddListener(UpdateBeamInfo);
@@ -86,17 +89,18 @@ public class Digging : MonoBehaviour
                 Vector3 pointDist = (rightHand.location + (rightHand.orientation * debugLineLength)) - (leftHand.location +
                     (leftHand.orientation * debugLineLength));
                 // If the dot is close to -1 then the hands are facing each other
-                combine = Vector3.Dot(leftHand.orientation.normalized, rightHand.orientation.normalized) <= -0.75 && pointDist.magnitude < handDist.magnitude;
-
+                combine = Vector3.Dot(leftHand.orientation.normalized, rightHand.orientation.normalized) <= -0.75;// && pointDist.magnitude < handDist.magnitude;
+                testDot = Vector3.Dot(leftHand.orientation.normalized, rightHand.orientation.normalized);
                 //Debug.DrawLine(rightHand.location, rightHand.location + (rightHand.orientation * debugLineLength), Color.black); 
                 //Debug.DrawLine(leftHand.location, leftHand.location + (leftHand.orientation * debugLineLength), Color.black); 
                 // Add a scalar*direction of the hands to the position of the hand to each one
                 // If the distance between these points is less than the distance between the hands
                 // then the hands are facing each other .
                 // Else the hands are in an incorrect orientation.
-                
-                Debug.LogWarning(leftHand.location.ToString() + " : " +debugLineLength);
-                Debug.LogWarning(rightHand.location);
+
+                //Debug.LogWarning(leftHand.location.ToString() + " : " + debugLineLength);
+                //Debug.LogWarning(rightHand.location);
+                combineTest.SetActive(combine);
                 if (combine)
                 {
                     // If we want to combine, then we can calculate the power using the distance between the hands
@@ -104,16 +108,17 @@ public class Digging : MonoBehaviour
                     currOutput = 1 / handDist.magnitude;
 
                     laserDir[0] = ((leftHand.location - rig.position) + (rightHand.location - rig.position)) / 2;
-
+                    laserDir[0].y *= -1;
                     // Debug
                     laserPos[0] = (leftHand.location + rightHand.location) / 2;
+                    combineTest.transform.position = laserPos[0];
                     //Debug.DrawLine(laserPos[0],laserPos[0] + laserDir[0] * 500);
                     //Debug.Log($"The laser starts at {laserPos}");
 
                 }
                 else
                 {
-                    for(int i = 0; i < laserDir.Length; i++)
+                    for (int i = 0; i < laserDir.Length; i++)
                     {
                         currOutput = maxBurnout / 2;
 
@@ -138,13 +143,14 @@ public class Digging : MonoBehaviour
             for (int i = 0; i < laserDir.Length; i++)
             {
                 Ray ray = new Ray(laserPos[i], laserDir[i]);
-                //Debug.DrawLine(laserPos[i], laserDir[i] * 500f);
+                Debug.DrawLine(laserPos[i], laserDir[i] * 500f);
 
-                
+
                 if (Physics.Raycast(ray, out hit, float.MaxValue, mask))
                 {
+                    hitTests[i].transform.position = hit.point;
 
-                    //Debug.Log($"Object Hit: {hit.collider.gameObject.name}");
+                    Debug.Log($"Object Hit: {hit.collider.gameObject.name}");
 
                     if (activeSample == null || activeSample.gameObject.GetInstanceID() != hit.collider.gameObject.GetInstanceID())
                     {
@@ -185,7 +191,7 @@ public class Digging : MonoBehaviour
         _isInCooldown = false;
     }
 
-    void UpdateBeamInfo(bool isLeft, Vector3 handOrientation, Vector3 handPosition)
+    void UpdateBeamInfo(bool isLeft, Vector3 handPosition , Vector3 handOrientation)
     {
         if (hands != Hand.None)
         {
@@ -194,7 +200,7 @@ public class Digging : MonoBehaviour
             {
                 leftHand.location = handPosition;
                 leftHand.orientation = handOrientation;
-                
+
             }
             else
             {
@@ -215,9 +221,12 @@ public class Digging : MonoBehaviour
     }
 
 
-    public void ToggleBeam(Hand hand)
+    public void ToggleBeam(Hand hand, bool newActive)
     {
-        Debug.Log("Toggle Beam: " +hand.ToString());
+        Debug.LogError("Toggle Beam: " + hand.ToString());
         hands = hand;
+        active = newActive;
     }
+
 }
+

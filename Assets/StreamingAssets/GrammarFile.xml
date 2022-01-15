@@ -26,11 +26,16 @@
 
   <rule id="rootRule">
     <one-of>
-      <item> <ruleref uri="#hand" /> </item>
-      <item> <ruleref uri="#general" /> </item>
+      <item>
+        <ruleref uri="#hand" />
+      </item>
+      <item>
+        <ruleref uri="#general" />
+      </item>
       <item>
         <ruleref uri="#actionFirst" />
       </item>
+      <item>break</item>
     </one-of>
   </rule>
 
@@ -45,14 +50,23 @@
 
   <rule id="thruster">
     <one-of>
-      <item>thruster</item>
-      <item>thrusters</item>
-      <item>engine</item>
-      <item>engines</item>
+      <item>
+        <one-of>
+          <item>thruster</item>
+          <item>engine</item>
+        </one-of>
+        <tag>out="pluralThrusters";</tag>
+      </item>
+      <item>
+        <one-of>
+          <item>thrusters</item>
+          <item>engines</item>
+        </one-of>
+        <tag>out="singleThruster";</tag>
+      </item>
     </one-of>
-    <tag>out="thruster";</tag>
   </rule>
-  
+
   <rule id="digging">
     <one-of>
       <item>laser</item>
@@ -60,16 +74,22 @@
     </one-of>
     <tag>out="digging";</tag>
   </rule>
-  
+
   <rule id="mode">
     <one-of>
-      <item><ruleref uri="#thruster"/></item>
-      <item><ruleref uri="#normal"/></item>
-      <item><ruleref uri="#digging"/></item>
+      <item>
+        <ruleref uri="#thruster"/>
+      </item>
+      <item>
+        <ruleref uri="#normal"/>
+      </item>
+      <item>
+        <ruleref uri="#digging"/>
+      </item>
       <item>inventory</item>
     </one-of>
   </rule>
-  
+
   <rule id="hand">
     <one-of>
       <item>left</item>
@@ -125,7 +145,7 @@
       </item>
     </one-of>
   </rule>
-  
+
   <rule id="actionFirst">
     <ruleref uri="#action" />
     <ruleref uri="#hand" />
@@ -136,7 +156,7 @@
     <ruleref uri="#action"/>
     <ruleref uri ="#mode"/>
   </rule>
-  
+
 
 
 

@@ -21,6 +21,13 @@ public class UI_Inventory : MonoBehaviour
     private void Start()
     {
         customEvents.UpdateInventoryIndex.AddListener(UpdateInventorySlot);
+        customEvents.UpdateActiveInventoryIndex.AddListener(SetActiveIndex);
+    }
+
+    private void SetActiveIndex(int index)
+    {
+        activeIndex = index;
+        throw new System.NotImplementedException();
     }
 
     /// <param name="index"></param>
@@ -39,19 +46,9 @@ public class UI_Inventory : MonoBehaviour
     }
 
     [ContextMenu("Update Inventory")]
-    /// <summary>
-    /// Given the index, it will update the information associated with it
-    /// in the relevant UI component
-    /// </summary>
-    /// <param name="index"></param>
     public void UpdateInventorySlot(int index)
     {
         slots[index].UpdateSlot(GetMarketData(GetInventorySlot(index).item));
-    }
-
-    public void DisplayActiveInventorySlot()
-    {
-       
     }
 
     [ContextMenu("Test Generate Sell Object")]

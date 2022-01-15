@@ -65,6 +65,7 @@ public class ExtendedViewFirstPerson : ExtendedView
 
 		var canvas = OptionalCrosshair.GetComponentInParent<Canvas>();
 
+
 		OptionalCrosshair.rectTransform.anchoredPosition =
 			new Vector2((_crosshairScreenPosition.x - Screen.width * 0.5f) * (canvas.GetComponent<RectTransform>().sizeDelta.x / Screen.width),
 			(_crosshairScreenPosition.y - Screen.height * 0.5f) * (canvas.GetComponent<RectTransform>().sizeDelta.y / Screen.height));
