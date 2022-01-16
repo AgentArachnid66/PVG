@@ -39,6 +39,7 @@ public class CustomEvents : MonoBehaviour
     private void Start()
     {
         switchMode.AddListener(testSwitch);
+        spawnItems.Invoke();
     }
 
     void testSwitch(Mode mode, Hand hand)

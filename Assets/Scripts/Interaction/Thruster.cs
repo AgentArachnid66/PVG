@@ -41,12 +41,18 @@ public class Thruster : MonoBehaviour
     private Vector3 _clockwiseVector = Vector3.zero;
     private Vector3 _anticlockwiseVector = Vector3.zero;
    
-    // Current dot product between the 
+    // Current dot product
     private float _dot;
+
+    public Terrain terrain;
+    private Vector3 _originalPos;
+    private float _distanceThreshold = 250f;
+    private float _floatingOffset = 5f;
 
     void Start()
     {
         m_Rigidbody = GetComponent<Rigidbody>();
+        _originalPos = transform.position;
     }
 
     public void UpdateVector(bool isClockwise)
@@ -57,11 +63,19 @@ public class Thruster : MonoBehaviour
 
     void Update()
     {
+        bool withinBounds = Vector3.Distance(transform.position, _originalPos) < _distanceThreshold;
         // Ideally would like to move away from doing this every frame
-        if (_activate)
+        if (_activate && withinBounds)
         {
             UpdateThrusters();
         }
+        // If it is too far away from the original position it gets reset so that the drone doesn't
+        // go out of bounds
+        else if (!withinBounds)
+        {
+            transform.position = _originalPos;
+        }
+        
     }
 
 
@@ -132,9 +146,15 @@ public class Thruster : MonoBehaviour
             // If this sum is less than 0.05 then treat it as if there is no input as the player is likely trying
             // to stop the drone
             _currSum = _currSum <= 0.05 * maxPower ? 0f : _currSum;
+
+            Vector3 targetPos = m_Rigidbody.position + (m_Rigidbody.transform.forward * _currSum);
+            float height = terrain.SampleHeight(targetPos);
+            targetPos.y = height + _floatingOffset;
+            Debug.Log($"Target Position {targetPos}");
+            
             // Apply the movement by multiplying the current forward vector by the sum generated and 
             // offsetting it by the current position in world space to get the position in world space
-            m_Rigidbody.MovePosition(m_Rigidbody.position + (m_Rigidbody.transform.forward * _currSum));
+            m_Rigidbody.MovePosition(targetPos);
 
 
         }
