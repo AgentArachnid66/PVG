@@ -9,7 +9,6 @@ using Leap.Unity.Interaction;
 /// </summary>
 public class UI_Inventory : MonoBehaviour
 {
-    private CustomEvents _customEvents;
     private Vector3 _sellObjectSpawnLocation;
     private Quaternion _sellObjectSpawnRotation;
     
@@ -17,6 +16,7 @@ public class UI_Inventory : MonoBehaviour
     public Rigidbody SellObjectSeedRigidbody;
     
 
+    // UI elements
     public InteractionSlider adjustStack;
     public TMPro.TextMeshPro textMesh;
 
@@ -32,10 +32,10 @@ public class UI_Inventory : MonoBehaviour
         _sellObjectSpawnLocation = transform1.position;
         _sellObjectSpawnRotation = transform1.rotation;
 
-        _customEvents = GameObject.Find("Scene Manager").GetComponent<CustomEvents>();
-        _customEvents.UpdateInventoryIndex.AddListener(UpdateInventorySlot);
-        _customEvents.UpdateActiveInventoryIndex.AddListener(SetActiveIndex);
-        _customEvents.AddScore.AddListener(UpdateSlider);
+        
+        CustomEvents.CustomEventsInstance.UpdateInventoryIndex.AddListener(UpdateInventorySlot);
+        CustomEvents.CustomEventsInstance.UpdateActiveInventoryIndex.AddListener(SetActiveIndex);
+        CustomEvents.CustomEventsInstance.AddScore.AddListener(UpdateSlider);
 
         adjustStack._horizontalSlideEvent.AddListener(AdjustStack);
 
@@ -65,8 +65,6 @@ public class UI_Inventory : MonoBehaviour
     }
     
     
-    /// <param name="index"></param>
-    /// <returns>The data at the given slot</returns>
     private InventoryData GetInventorySlot(int index)
     {
         return Player.PlayerInstance.inventory[index];
@@ -82,8 +80,6 @@ public class UI_Inventory : MonoBehaviour
         UpdateSellObject(slotData);
     }
 
-    /// <param name="itemID"></param>
-    /// <returns>The market data at the given Item ID</returns>
     private MarketData GetMarketData(int itemID)
     {
 

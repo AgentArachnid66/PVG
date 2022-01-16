@@ -10,26 +10,25 @@ public class UI_Screen : MonoBehaviour
     public Camera source;
 
 
-    private RenderTexture target;
-    private Renderer renderer;
+    private RenderTexture _target;
+    private Renderer _renderer;
 
     private void Start()
     {
-        target = new RenderTexture(1024, 1024, 16);
-        if (target.IsCreated())
+        // Creates the render texture
+        _target = new RenderTexture(1024, 1024, 16);
+        if (_target.IsCreated())
         {
-            target.Create();
+            _target.Create();
         }
+        
+        //  Gets the renderer component
+        _renderer = GetComponent<Renderer>();
 
-        renderer = GetComponent<Renderer>();
-
-        source.targetTexture = target;
-        renderer.material.mainTexture = target;
-    }
-
-    public void test(string single)
-    {
-        Debug.Log(single);
+        // Sets the target texture of the source camera to the newly created render texture
+        source.targetTexture = _target;
+        // Then sets the main texture of the screen object to the render texture
+        _renderer.material.mainTexture = _target;
     }
 
 }

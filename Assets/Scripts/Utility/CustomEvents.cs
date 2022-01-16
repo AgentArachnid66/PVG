@@ -9,6 +9,7 @@ using UnityEngine.Events;
 public class CustomEvents : MonoBehaviour
 {
     private static CustomEvents customEvents;
+    
     public static CustomEvents CustomEventsInstance
     {
         get
@@ -20,20 +21,9 @@ public class CustomEvents : MonoBehaviour
         }
     }
 
-    public UnityEvent engageThrusters = new UnityEvent();
-
-    public UnityEvent disengageThrusters = new UnityEvent();
-
-    public UnityEvent hand = new UnityEvent();
-
-    public UnityEvent weapon = new UnityEvent();
-
-    public UnityEvent shootItem = new UnityEvent();
-
+    
     public UnityEvent spawnItems = new UnityEvent();
-
-    public UnityEventBool toggleThrusters = new UnityEventBool();
-
+    
     public UnityEventMode switchMode = new UnityEventMode();
 
     public UnityEventInt AddScore = new UnityEventInt();
@@ -46,8 +36,6 @@ public class CustomEvents : MonoBehaviour
 
     public UnityEventPosOrient UpdateLaser = new UnityEventPosOrient();
     
-    
-
     private void Start()
     {
         switchMode.AddListener(testSwitch);
@@ -58,68 +46,7 @@ public class CustomEvents : MonoBehaviour
         Debug.LogWarning("Switched to " + mode.ToString() + " on the " + hand.ToString() + " hand");
     }
 
-    public bool test;
 
-    [ContextMenu("Test Toggle Thrusters")]
-    public void TestToggle()
-    {
-        toggleThrusters.Invoke(test);
-    }
-
-
-
-    // This is where I will check to see if the player has interacted with any controls
-    void Update()
-    {
-        // Switch to different modes
-        if (Input.GetKeyDown(KeyCode.Keypad1))
-        {
-            Debug.Log("Thrusters");
-            switchMode.Invoke(Mode.Thruster, Hand.Left);
-        }
-
-        if (Input.GetKeyDown(KeyCode.Keypad2))
-        {
-            Debug.Log("Laser");
-            switchMode.Invoke(Mode.Weapon, Hand.Both);
-        }
-
-        if (Input.GetKeyDown(KeyCode.Keypad3))
-        {
-            Debug.Log("Collection");
-            switchMode.Invoke(Mode.Collection, Hand.Both);
-        }
-
-        if (Input.GetKeyDown(KeyCode.Keypad0))
-        {
-            Debug.Log("Clear");
-            switchMode.Invoke(Mode.None, Hand.Both);
-        }
-
-
-        // Use those modes
-        if (Input.GetMouseButtonDown(0))
-        {
-            Debug.Log("Activate Thrusters");
-            toggleThrusters.Invoke(true);
-        }
-        if (Input.GetMouseButtonUp(0))
-        {
-            Debug.Log("Deactivate Thrusters");
-            toggleThrusters.Invoke(false);
-        }
-        if (Input.GetMouseButtonDown(1))
-        {
-            Debug.Log("Switch to Laser");
-            switchMode.Invoke(Mode.Weapon, Hand.Left);
-        }
-        if (Input.GetMouseButtonDown(2))
-        {
-            Debug.Log("Both Hands Laser");
-            switchMode.Invoke(Mode.Weapon, Hand.Both);
-        }
-
-    }
 }
 
 #region Custom Event Types  
@@ -146,16 +73,6 @@ public class UnityEventInt : UnityEvent<int>
 
 }
 
-public class UnityEventLeapVector : UnityEvent<bool, Leap.Vector>
-{
-
-}
-
-public class UnityEventVector3 : UnityEvent<bool, Vector3>
-{
-
-}
-
 public class UnityEventPosOrient : UnityEvent<bool, Vector3, Vector3>
 {
 }
@@ -164,12 +81,6 @@ public class UnityEventFloat : UnityEvent<float>
 {
 }
 
-public class UnityEventQuaternion : UnityEvent<Quaternion>
-{
-
-}
-
-
 #endregion
 
 #region Custom Enums
@@ -177,9 +88,7 @@ public class UnityEventQuaternion : UnityEvent<Quaternion>
 [System.Serializable]
 public enum Mode
 {
-    None,
     Thruster,
-    Weapon,
     Hand,
     Collection,
     Menu

@@ -9,6 +9,8 @@ public class UI_SellObject : MonoBehaviour
 
     public InventoryData inventoryData;
 
+    
+    // When it collides with the market object, deposit the inventory data
     private void OnTriggerEnter(Collider other)
     {
         Debug.LogWarning("Trigger Entered");

@@ -4,7 +4,13 @@ using UnityEngine;
 
 public class Ore : Sample
 {
+    // This is the more complex class as it gives finite resources
+    
+    
+    // How many this class gives in total
     [SerializeField] protected int _sampleCount;
+    // The value of _sampleCount required for the Ore to shatter and give the remaining
+    // resources in a massive collection.
     [SerializeField] protected int _shatterCount;
 
 
@@ -30,47 +36,56 @@ public class Ore : Sample
     [ContextMenu("On Break")]
     public override void OnBreak(float damage)
     {
-
+        
+        // If the player is attempting to shatter the Ore
         if (_sampleCount <= _shatterCount)
         {
             Debug.Log($"<color=#00FFFF>SHATTER ATTEMPT: {_sampleCount}</color>");
+            
             int sampleCount = _sampleCount;
+            // For the remaining sample count
             for (int i = 0; i < sampleCount; i++)
             {
+                // Attempt to get a valid inventory slot ID
                 if (Player.PlayerInstance.GetItemIndexFromID(itemID) <= -1)
                 {
+                    // If no slot exists, break out of the loop
                     Debug.Log("Ran out of space");
                     break;
                 }
-                //CoroutineManager.Instance.StartCoroutine(AddOreCount(_sampleCount));
+                // If a valid slot exists, add the Ore
                 AddOreCount(_sampleCount);
             }
-
-
+            
+            // If the sample count is greater than 0 then there were some resources left
+            // so the game object remains active
             gameObject.SetActive(_sampleCount > 0);
 
         }
+        
+        // Player is trying to sample the Ore
         else
         {
+            
             Debug.Log($"<color=#00FFFF>TESTING INVENTORY</color>");
+            
+            // Attempt to get a valid inventory slot ID
             if (Player.PlayerInstance.GetItemIndexFromID(itemID) > -1)
             {
                 Debug.Log($"<color=#0000FF>ADDED</color>");
-                //CoroutineManager.Instance.StartCoroutine(AddOreCount(_sampleCount));
+                // If slot exists, add the Ore
                 AddOreCount(_sampleCount);
 
             }
         }
     }
 
-    //private IEnumerator AddOreCount(int sample)
     protected override void AddOreCount(int sample)
     {
-        //Start 0.1 second animation of collection
-
-        //yield return new WaitForSeconds(0.1f);
+        // If the power output from the player is great enough
         if (Player.PlayerInstance.dig.currOutput >= minPower)
         {
+            // Add the Ore to the inventory
             if (Player.PlayerInstance.AddItemIDToInventory(itemID))
             {
                 Debug.Log($"Added {itemID}, Sample: {sample}.");

@@ -20,13 +20,12 @@ public class Player : MonoBehaviour
     }
 
     private Mode currentMode;
-    [SerializeField] private CollectionObjectPool objectpoolVacuum;
     
     public int points;
     public CustomEvents customEvents;
 
-    // Menu Objects Array
-    public UI_Menu[] menus = new UI_Menu[2];
+
+    public UI_Controller uiController;
     public Thruster thruster;
     public Digging dig;
 
@@ -34,50 +33,14 @@ public class Player : MonoBehaviour
     public Market market;
     [SerializeField]
     public InventoryData[] inventory = new InventoryData[5];
-
-
-    public float maxCollectionDistance;
-    public float vacuumSpeed;
-    public Transform collectionPoint;
-
-    public float ejectionMultiplier;  
-    public Rigidbody test;
-
-    //public Transform leftTest;
-    //public Transform rightTest;
+    
     void Start()
     {
-        // Set up so that when the player presses the right button, it will activate the thrusters and when they release it, they will stop.
-        //customEvents.engageThrusters.AddListener(EngageThrusters);
-        //customEvents.disengageThrusters.AddListener(DisengageThrusters);
-
 
         customEvents.switchMode.AddListener(SwitchMode);
-
-        customEvents.toggleThrusters.AddListener((bool result) =>
-        {
-            //thruster.ToggleThrusters(result);
-        });
-        
-        // Leap Motion
-        // I think this line is unnecessary and safe to delete but I'm not sure so it will remain for now
-        //customEvents.UpdateHandPosition.AddListener(LeapUpdateThrusterPosition);
-
-
         customEvents.AddScore.AddListener(AddScore);
-        //customEvents.shootItem.AddListener(ShootItem);
 
-        Debug.Log("Player Script active in scene");
-
-    }
-
-
-    void Update()
-    {
-        
-
-        //customEvents.UpdateLaser.Invoke(true, leftTest.forward, leftTest.position);
-        //customEvents.UpdateLaser.Invoke(false, rightTest.forward, rightTest.position);
+        SwitchMode(Mode.Hand, Hand.Both);
 
     }
 
@@ -92,88 +55,77 @@ public class Player : MonoBehaviour
     void SwitchMode(Mode mode, Hand hand)
     {
         currentMode = mode;
-        //thruster.ToggleActive(false);
 
         switch (mode)
         {
-            case Mode.None:
-                break;
-
             case Mode.Thruster:
-                thruster.ToggleActive(true);
+                // Switch off UI for other modes
+                uiController.ToggleMarketUI(hand, false);
+                
+                // Switch on UI for this mode
+                uiController.ToggleThrusterUI(hand, true);
+                
+                // Turn off Laser on the hand/s
+                dig.ToggleBeam(hand, false);
+                
+                // Enable the thrusters
+                thruster.ToggleThrusters(true);
+                
                 break;
-
-            case Mode.Weapon:
-                break;
-
+            
+            
             case Mode.Hand:
+                // Turn off everything
                 dig.ToggleBeam(global::Hand.None, false);
+                thruster.ToggleThrusters(false);
+                uiController.ToggleMarketUI(hand, false);
+                uiController.ToggleThrusterUI(hand, false);
                 break;
 
             case Mode.Collection:
+                
+                // Turn off Thruster
+                thruster.ToggleThrusters(false);
+                
+                // Turn off Thruster UI
+                uiController.ToggleThrusterUI(hand, false);
+                
+                // Turn off Market UI
+                uiController.ToggleMarketUI(hand, false);
+                
+                // Turn on Laser
                 dig.ToggleBeam(hand, true);
+                
                 break;
 
             case Mode.Menu:
-                foreach (UI_Menu ui in menus)
-                {
-                    ui.OnSwitchedMenu(hand, true);
-                }
+                
+                // Turn off Thruster
+                thruster.ToggleThrusters(false);
+                
+                // Turn off Laser
+                dig.ToggleBeam(hand, false);
+                
+                // Turn off thruster UI
+                uiController.ToggleThrusterUI(hand, false);
+                
+                // Turn on Buy/Sell Menu
+                uiController.ToggleMarketUI(hand, true);
+                
                 break;
         }
     }
 
-    void EngageThrusters()
-    {
-        thruster.ToggleThrusters(true);
-        Debug.Log("Engage Thrusters");
-    }
-
-    void DisengageThrusters()
-    {
-        thruster.ToggleThrusters(false);
-        Debug.Log("Disengage Thrusters");
-    }
-
-    void Hand()
-    {
-        Debug.Log("Hand");
-    }
-
-    void Weapon()
-    {
-    }
-
-
-    void LeapUpdateThrusterPosition(bool isLeft, Leap.Vector position)
-    {
-        Vector3 unityPosition = CustomUtility.LeapVectorToUnityVector3(position);
-        //GameObject active = isLeft ? thruster.leftThruster : thruster.rightThruster;
-
-        //active.transform.position = unityPosition;
-    }
-
-    void LeapUpdateLaser()
-    {
-        
-
-    }
-    
-
     #endregion
 
-    #region Movement
 
-    #endregion
 
-    #region Score System
 
     void AddScore(int deltaScore)
     {
         points += deltaScore;
     }
 
-    #endregion
 
     #region Inventory
 
@@ -301,30 +253,6 @@ public class Player : MonoBehaviour
         }
     }
 
-    IEnumerator BeginVacuumItem(GameObject item , Vector3 spawn , float waitTime)
-    {
-        float elapsedTime = 0;
-        item.transform.position = spawn;
- 
-        while (elapsedTime < waitTime && (currentMode == Mode.Collection))
-        {
-            Vector3 target = collectionPoint.transform.position;
-            item.transform.position = Vector3.Lerp(spawn, target, (elapsedTime / waitTime));
-            elapsedTime += Time.deltaTime;
- 
-            // Yield here
-            yield return null;
-        }  
-        // Make sure we got there
-        item.transform.position = collectionPoint.transform.position;
-
-        yield return null;
-    }
-    
-    public void VacuumItem(GameObject item, Vector3 spawn)
-    {
-        StartCoroutine(BeginVacuumItem(item, spawn, vacuumSpeed));
-    }
 
 
     

@@ -4,12 +4,16 @@ using UnityEngine;
 
 public class Node : Sample
 {
+    // This is a more simple class as it gives infinite resources of a specific type that is low in 
+    // value on the market. For more information on functions, please see the parent script (Sample)
+    
     public NodeData data;
 
     public override void OnSpawn()
     {
 
     }
+    
 
     public override void OnBreak(float damage)
     {

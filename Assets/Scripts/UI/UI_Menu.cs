@@ -13,7 +13,7 @@ public class UI_Menu : MonoBehaviour
     public float threshold;
 
     // The current dot product
-    private float currDot = 0f;
+    private float _currDot = 0f;
 
     // Whether or not that this code should open when looking at the view object
     public bool canOpen;
@@ -23,28 +23,17 @@ public class UI_Menu : MonoBehaviour
 
     void Update()
     {
-        if (canOpen)
-        {
-            CheckView();
-        }
+        CheckView();
     }
 
 
     void CheckView()
     {
-        // If the dot product of the menu's forward vector and the player's forward vector is above threshold then open the menu
-        currDot = Vector3.Dot(view.transform.forward, transform.forward);
-        Debug.Log(currDot);
-
-        transform.gameObject.SetActive(currDot >= threshold);
+        // If the dot product of the menu's forward vector and the player's forward vector is above threshold then open the menu.
+        // This means that the player is likely looking at the menu
+        _currDot = Vector3.Dot(view.transform.forward, transform.forward);
+        transform.gameObject.SetActive(_currDot >= threshold);
 
     }
-
-    public void OnSwitchedMenu(Hand hand, bool newCanOpen)
-    {
-        if(hand == activeHand)
-        {
-            canOpen = newCanOpen;
-        }
-    }
+    
 }

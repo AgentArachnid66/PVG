@@ -148,12 +148,12 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 42475257}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.066, y: -0.167, z: 0.492}
-  m_LocalScale: {x: 0.05, y: 0.05, z: 0.05}
+  m_LocalRotation: {x: -0, y: -0.17364816, z: -0, w: 0.9848078}
+  m_LocalPosition: {x: -0.16821283, y: 0.23300013, z: -0.037810057}
+  m_LocalScale: {x: 0.049999997, y: 0.05, z: 0.049999997}
   m_Children: []
-  m_Father: {fileID: 1182778177}
-  m_RootOrder: 2
+  m_Father: {fileID: 1500777770}
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &42475259
 MonoBehaviour:
@@ -244,6 +244,12 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 2, y: 2, z: 2}
   m_Center: {x: 0, y: 1, z: 0}
+--- !u!1 &70861740 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4412166069446874819, guid: 9608b7317b630e7478320be1f36bcd94,
+    type: 3}
+  m_PrefabInstance: {fileID: 750352108}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &85097215
 GameObject:
   m_ObjectHideFlags: 0
@@ -460,8 +466,8 @@ Transform:
   m_Children:
   - {fileID: 228027875}
   - {fileID: 1235198601}
-  - {fileID: 1500777770}
   - {fileID: 440172919}
+  - {fileID: 1500777770}
   m_Father: {fileID: 1182778177}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -500,6 +506,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   thrusters: {fileID: 1808630726}
+  leftThrusterUI: {fileID: 70861740}
+  rightThrusterUI: {fileID: 1444367690}
+  leftMarketUI: {fileID: 440172918}
+  rightMarketUI: {fileID: 1500777769}
 --- !u!1001 &161197705
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -747,22 +757,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 78faa01b22add29419a079ea9a590dae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  customEvents: {fileID: 1156230584}
   leftHand: {fileID: 85097215}
   rightHand: {fileID: 1285246992}
   distance: 20
   offset: {x: 0, y: 0, z: 3}
-  _drone: {fileID: 0}
-  testRight: {x: 0, y: 0, z: 0}
-  testLeft: {x: 0, y: 0, z: 0}
-  vectorLeft:
-    x: 0
-    y: 0
-    z: 0
-  vectorRight:
-    x: 0
-    y: 0
-    z: 0
 --- !u!114 &200412059
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -786,11 +784,8 @@ MonoBehaviour:
   - {fileID: 1409359401}
   active: 1
   rig: {fileID: 200412057}
-  customEvents: {fileID: 1156230584}
   maxBurnout: 0.5
-  currOutput: 0
   hands: 3
-  combine: 0
   leftHand:
     isLeft: 0
     location: {x: 0, y: 0, z: 0}
@@ -799,9 +794,6 @@ MonoBehaviour:
     isLeft: 0
     location: {x: 0, y: 0, z: 0}
     orientation: {x: 0, y: 0, z: 0}
-  activeSample: {fileID: 0}
-  debugLineLength: 50
-  testDot: 0
 --- !u!224 &228027875 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 4412166069446874818, guid: 9608b7317b630e7478320be1f36bcd94,
@@ -2574,7 +2566,7 @@ Transform:
   - {fileID: 575401985}
   - {fileID: 1443624344}
   m_Father: {fileID: 156529386}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 70, z: 0}
 --- !u!1001 &452486319
 PrefabInstance:
@@ -3338,6 +3330,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4412166069139831239, guid: 9608b7317b630e7478320be1f36bcd94,
         type: 3}
+      propertyPath: m_Name
+      value: Left Thruster Slider
+      objectReference: {fileID: 0}
+    - target: {fileID: 4412166069139831239, guid: 9608b7317b630e7478320be1f36bcd94,
+        type: 3}
       propertyPath: m_Layer
       value: 5
       objectReference: {fileID: 0}
@@ -3454,7 +3451,7 @@ PrefabInstance:
     - target: {fileID: 4412166069446874819, guid: 9608b7317b630e7478320be1f36bcd94,
         type: 3}
       propertyPath: m_Name
-      value: Left Thruster Slider
+      value: Left Thruster Control
       objectReference: {fileID: 0}
     - target: {fileID: 4412166069446874819, guid: 9608b7317b630e7478320be1f36bcd94,
         type: 3}
@@ -3486,12 +3483,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f0176b6e7bfa5284f8cc009c98cc7991, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  objectpoolVacuum: {fileID: 0}
   points: 0
   customEvents: {fileID: 1156230584}
-  menus:
-  - {fileID: 0}
-  - {fileID: 0}
+  uiController: {fileID: 156529388}
   thruster: {fileID: 1808630726}
   dig: {fileID: 200412059}
   market: {fileID: 42475259}
@@ -3506,11 +3500,6 @@ MonoBehaviour:
     amount: 0
   - item: 0
     amount: 0
-  maxCollectionDistance: 0
-  vacuumSpeed: 0
-  collectionPoint: {fileID: 0}
-  ejectionMultiplier: 0
-  test: {fileID: 0}
 --- !u!1001 &778669619
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4632,27 +4621,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d346393263a6bf428f266ede6d0a939, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  engageThrusters:
-    m_PersistentCalls:
-      m_Calls: []
-  disengageThrusters:
-    m_PersistentCalls:
-      m_Calls: []
-  hand:
-    m_PersistentCalls:
-      m_Calls: []
-  weapon:
-    m_PersistentCalls:
-      m_Calls: []
-  shootItem:
-    m_PersistentCalls:
-      m_Calls: []
   spawnItems:
     m_PersistentCalls:
       m_Calls: []
   toggleThrusters:
     m_PersistentCalls:
       m_Calls: []
+  testMode: 0
+  testHand: 0
   test: 0
 --- !u!4 &1156230585
 Transform:
@@ -4699,8 +4675,6 @@ MonoBehaviour:
     Timestamp: 0
     CurrentFramesPerSecond: 0
     Hands: []
-  origin: {fileID: 1808630730}
-  radius: 5
   customEvents: {fileID: 1156230584}
 --- !u!1 &1157638612
 GameObject:
@@ -5091,7 +5065,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Sample text
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -5343,6 +5317,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4412166069139831239, guid: 9608b7317b630e7478320be1f36bcd94,
         type: 3}
+      propertyPath: m_Name
+      value: Right Thruster Slider
+      objectReference: {fileID: 0}
+    - target: {fileID: 4412166069139831239, guid: 9608b7317b630e7478320be1f36bcd94,
+        type: 3}
       propertyPath: m_Layer
       value: 5
       objectReference: {fileID: 0}
@@ -5459,7 +5438,7 @@ PrefabInstance:
     - target: {fileID: 4412166069446874819, guid: 9608b7317b630e7478320be1f36bcd94,
         type: 3}
       propertyPath: m_Name
-      value: Right Thruster Slider
+      value: Right Thruster Control
       objectReference: {fileID: 0}
     - target: {fileID: 4412166069446874819, guid: 9608b7317b630e7478320be1f36bcd94,
         type: 3}
@@ -5469,7 +5448,7 @@ PrefabInstance:
     - target: {fileID: 4412166069446874819, guid: 9608b7317b630e7478320be1f36bcd94,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4412166069914958965, guid: 9608b7317b630e7478320be1f36bcd94,
         type: 3}
@@ -5671,6 +5650,12 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 778669619}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1444367690 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4412166069446874819, guid: 9608b7317b630e7478320be1f36bcd94,
+    type: 3}
+  m_PrefabInstance: {fileID: 1315826934}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1500777769
 GameObject:
   m_ObjectHideFlags: 0
@@ -5706,8 +5691,9 @@ Transform:
   - {fileID: 2004710509}
   - {fileID: 647092265}
   - {fileID: 1304428485}
+  - {fileID: 42475258}
   m_Father: {fileID: 156529386}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 110, z: 0}
 --- !u!1 &1530320951
 GameObject:
@@ -6671,6 +6657,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0d87d489c55fc504987b709bbe1e4ec5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!102 &1793266722 stripped
+TextMesh:
+  m_CorrespondingSourceObject: {fileID: 102630856385811638, guid: d53bbce24b78fb742ba7b93ce8a36f86,
+    type: 3}
+  m_PrefabInstance: {fileID: 408191574}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &1796728746 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4412166069139831237, guid: 9608b7317b630e7478320be1f36bcd94,
@@ -6724,13 +6716,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxPower: 0.05
-  rotationMultiplier: 10
-  isActive: 0
+  rotationMultiplier: 2
   overrideActive: 0
   leftControl: {fileID: 1018153086}
   rightControl: {fileID: 1796728746}
-  leftThrusterUI: {fileID: 1702753863}
-  dot: 0
+  _leftThrusterUI: {fileID: 1702753863}
+  _rightThrusterUI: {fileID: 1793266722}
 --- !u!135 &1808630727
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -6837,22 +6828,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 78faa01b22add29419a079ea9a590dae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  customEvents: {fileID: 1156230584}
   leftHand: {fileID: 85097215}
   rightHand: {fileID: 1285246992}
   distance: 20
   offset: {x: 0, y: 0, z: 3}
-  _drone: {fileID: 0}
-  testRight: {x: 0, y: 0, z: 0}
-  testLeft: {x: 0, y: 0, z: 0}
-  vectorLeft:
-    x: 0
-    y: 0
-    z: 0
-  vectorRight:
-    x: 0
-    y: 0
-    z: 0
 --- !u!1 &1875776182
 GameObject:
   m_ObjectHideFlags: 0

@@ -7,7 +7,10 @@ using System.IO;
 
 public class HeightMapGenerator : MonoBehaviour
 {
-    private Texture2D texture;
+    // This script was meant to generate a terrain for me based on a procedurally generated texture
+    
+    
+    private Texture2D _texture;
     public int width = 256;
     public int height = 256;
     public float scale = 20f;
@@ -21,9 +24,9 @@ public class HeightMapGenerator : MonoBehaviour
     private Renderer _renderer;
     private void Awake()
     {
-        texture = new Texture2D(width, height, TextureFormat.RGB24, true);
-        texture.name = "Procedural Texture";
-        GetComponent<MeshRenderer>().material.mainTexture = texture;
+        _texture = new Texture2D(width, height, TextureFormat.RGB24, true);
+        _texture.name = "Procedural Texture";
+        GetComponent<MeshRenderer>().material.mainTexture = _texture;
     }
 
     // Start is called before the first frame update
@@ -36,7 +39,6 @@ public class HeightMapGenerator : MonoBehaviour
     [ContextMenu("Update Texture")]
     void UpdateTexture()
     {
-
         _renderer.material.mainTexture = GenerateTexture();
         Debug.Log("Update Texture");
     }

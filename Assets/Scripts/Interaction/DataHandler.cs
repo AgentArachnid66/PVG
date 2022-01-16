@@ -11,8 +11,6 @@ public class DataHandler : MonoBehaviour
     private Controller controller = new Controller();
 
     public Leap.Frame frame;
-    public Transform origin;
-    public float radius = 5;
     
     
     
@@ -20,16 +18,18 @@ public class DataHandler : MonoBehaviour
    //public 
     public void Update()
     {
-        //Debug.Log("Controller is " + (controller.IsConnected ? "Connected" : "not Connected"));
         
         frame = controller.Frame();
 
         ProcessLeapData();
-        //controller.FrameReady += ProcessLeapData;
-
+        
     }
     
     /*
+     
+    // I wanted to make this function have the ability to send out data along a LSL 
+    // Network to a python script that could use AI to identify a gesture
+    // then feedback it's decision back to the game
     void Awake()
     {
         StreamInfo streamInfo = new StreamInfo(StreamName, StreamType, 3, Time.fixedDeltaTime * 1000, channel_format_t.cf_float32);
@@ -50,32 +50,18 @@ public class DataHandler : MonoBehaviour
     }
     */
 
-    void Awake()
-    {
-    }
-
-    void FixedUpdate()
-    {
-    }
 
     
+    // An optimisation for this function would be to move it away from 
+    // Update and only call it when the frame data is ready but this 
+    // difference would not be noticeable
     void ProcessLeapData()
     {
-        // So this function will take the Leap Frame data and convert it into an array of floats to be sent over
-        // the LSL streams and to be used in my other scripts.
-
-       
-
         foreach(Leap.Hand hand in frame.Hands){
             string id = hand.IsLeft ? "Left Hand Position: " : "Right Hand Position: ";
 
             customEvents.UpdateHandPosition.Invoke(hand.IsLeft, hand.PalmPosition, hand.PalmNormal);
 
-            //customEvents.UpdateLaser.Invoke(hand.IsLeft, CustomUtility.LeapVectorToUnityVector3(hand.PalmNormal), (CustomUtility.LeapVectorToUnityVector3(hand.PalmPosition) + origin.position));
-
-
-            //Debug.Log(origin.position + hand.PalmPosition.ToVector3());
-            
         }
 
     }

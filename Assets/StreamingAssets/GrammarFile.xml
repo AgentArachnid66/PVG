@@ -27,15 +27,19 @@
   <rule id="rootRule">
     <one-of>
       <item>
-        <ruleref uri="#hand" />
-      </item>
-      <item>
-        <ruleref uri="#general" />
-      </item>
-      <item>
         <ruleref uri="#actionFirst" />
       </item>
+      <item>
+        <ruleref uri="#general"/>
+      </item>
+      <item>
+        <ruleref uri="#turn"/>
+      </item>      
+      <item>
+      <ruleref uri="#generalTurn"/>
+    </item>
       <item>break</item>
+      <item>quit game</item>
     </one-of>
   </rule>
 
@@ -74,6 +78,15 @@
     </one-of>
     <tag>out="digging";</tag>
   </rule>
+  
+  <rule id="inventory">
+    <one-of>
+      <item>inventory</item>
+      <item>market</item>
+      <item>buy screen</item>
+      <item>sell screen</item>
+    </one-of>
+  </rule>
 
   <rule id="mode">
     <one-of>
@@ -86,7 +99,9 @@
       <item>
         <ruleref uri="#digging"/>
       </item>
-      <item>inventory</item>
+      <item>
+        <ruleref uri="#inventory"/>
+      </item>
     </one-of>
   </rule>
 
@@ -146,6 +161,13 @@
     </one-of>
   </rule>
 
+  <rule id="toggle">
+    <one-of>
+      <item>on</item>
+      <item>off</item>
+    </one-of>
+  </rule>
+
   <rule id="actionFirst">
     <ruleref uri="#action" />
     <ruleref uri="#hand" />
@@ -156,7 +178,19 @@
     <ruleref uri="#action"/>
     <ruleref uri ="#mode"/>
   </rule>
-
+  
+  <rule id="turn">
+    <item>turn</item>
+    <ruleref uri="#toggle"/>
+    <ruleref uri="#hand"/>
+    <ruleref uri="#mode"/>
+  </rule>
+  
+  <rule id="generalTurn">
+    <item>turn</item>
+    <ruleref uri="#toggle"/>
+    <ruleref uri="#mode"/>
+  </rule>
 
 
 
