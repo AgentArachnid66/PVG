@@ -9,15 +9,15 @@ public class UI_Controller : MonoBehaviour
     // voice commands and leap motion input
     // It will also handle the upgrades on the Buy Menu
     
-    private CustomEvents _customEvents;
     public Thruster thrusters;
     public GameObject leftThrusterUI;
     public GameObject rightThrusterUI;
     public GameObject leftMarketUI;
     public GameObject rightMarketUI;
+    public TextMesh scoreDisplay;
+    
     void Start()
     {
-        _customEvents = GameObject.Find("Scene Manager").GetComponent<CustomEvents>();
         ToggleMarketUI(Hand.Both, false);
         ToggleThrusterUI(Hand.Both, false);
     }
@@ -25,11 +25,16 @@ public class UI_Controller : MonoBehaviour
     #region Upgrade Screen
 
 
-    
+
     // Increases the max speed of the thrusters
-    public void IncreaseSpeed(float percentageIncrease)
+    public void IncreaseSpeed(GameObject button)
     {
-        thrusters.maxPower *= 1 + (percentageIncrease/100f);
+        if (Player.PlayerInstance.SpendPoints(10))
+        {
+            Debug.Log("Increase Speed of Drone");
+            thrusters.maxPower *= 1 + (50 / 100f);
+            button.SetActive(false);
+        }
     }
     
     
@@ -39,7 +44,10 @@ public class UI_Controller : MonoBehaviour
     
     #region UI Events
 
-    
+    public void UpdateScore(int newScore)
+    {
+        scoreDisplay.text = "Current Points: " + newScore.ToString();
+    }
     
     public void ToggleThrusterUI(Hand hand, bool active)
     {

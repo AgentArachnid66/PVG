@@ -104,13 +104,13 @@ public class Thruster : MonoBehaviour
             // Rotate the forward vector by the rotation derived from the slider
             if (clockwise)
             {
-                _clockwiseVector = Quaternion.Euler(0,Mathf.Lerp(-180, 180, rotationPower) , 0) * m_Rigidbody.transform.forward * rotationPower;
+                _clockwiseVector = Quaternion.Euler(0,Mathf.Lerp(-90, 90, rotationPower) , 0) * m_Rigidbody.transform.forward * rotationPower;
                 //Debug.DrawLine(m_Rigidbody.transform.position, m_Rigidbody.transform.position + clockwiseVector * 500);
                 _leftThrusterUI.text = Mathf.RoundToInt(leftControl.HorizontalSliderValue * 100f).ToString() + "%";
             }
             else
             {
-                _anticlockwiseVector = Quaternion.Euler(0, Mathf.Lerp(-180, 180, 1-rotationPower), 0) * m_Rigidbody.transform.forward * rotationPower;
+                _anticlockwiseVector = Quaternion.Euler(0, Mathf.Lerp(-90, 90, 1-rotationPower), 0) * m_Rigidbody.transform.forward * rotationPower;
                 Debug.DrawLine(m_Rigidbody.transform.position, m_Rigidbody.transform.position + _anticlockwiseVector * 500);
                 _rightThrusterUI.text = Mathf.RoundToInt(rightControl.HorizontalSliderValue * 100f).ToString() + "%";
             }

@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using Leap;
+using Leap.Unity;
 using UnityEngine;
+using VolumetricLines;
 
 public class Digging : MonoBehaviour
 {
@@ -25,11 +28,10 @@ public class Digging : MonoBehaviour
      */
 
     // Objects to display this code working in the demo
-    public GameObject combineTest;
-    public GameObject[] hitTests = new GameObject[2];
-    // How long the debug lines for the lasers are
-    private float debugLineLength = 500f;
+    public VolumetricLineBehavior combineTest;
+    public VolumetricLineBehavior[] hitTests = new VolumetricLineBehavior[2];
     
+
     // Whether or not this code is active
     public bool active;
 
@@ -79,10 +81,6 @@ public class Digging : MonoBehaviour
         // First check if the laser is active
         if (active)
         {
-            // Resetting laser directions and positions to zero
-            _laserDir[1] = Vector3.zero;
-            _laserPos[1] = Vector3.zero;
-
             // Then check if the player has both hands as lasers
             if (hands == Hand.Both)
             {
@@ -100,7 +98,7 @@ public class Digging : MonoBehaviour
 
 
                
-                combineTest.SetActive(_combine);
+                combineTest.gameObject.SetActive(_combine);
                 if (_combine)
                 {
                     // If we want to combine, then we can calculate the power using the distance between the hands
@@ -119,8 +117,14 @@ public class Digging : MonoBehaviour
                     // position vectors
                     _laserPos[0] = (leftHand.location + rightHand.location) / 2;
                     
-                    // Sets the test sphere's position
+                    // Finally Update the lasers VFX
                     combineTest.transform.position = _laserPos[0];
+                    combineTest.SetStartAndEndPoints(Vector3.zero, _laserDir[0]*500f);
+
+                    foreach (VolumetricLineBehavior hitTest in hitTests)
+                    {
+                        hitTest.gameObject.SetActive(false);
+                    }
 
                 }
                 else
@@ -132,6 +136,10 @@ public class Digging : MonoBehaviour
 
                         _laserDir[i] = i == 0 ? leftHand.orientation : rightHand.orientation;
                         _laserPos[i] = i == 0 ? leftHand.location : rightHand.location;
+                        
+                        hitTests[i].transform.position = _laserPos[i];
+                        hitTests[i].SetStartAndEndPoints(Vector3.zero, _laserDir[i]*500f);
+                        hitTests[i].gameObject.SetActive(true);
                     }
                 }
             }
@@ -148,15 +156,26 @@ public class Digging : MonoBehaviour
                 _laserDir[0] = hands == Hand.Left ? leftHand.orientation : rightHand.orientation;
 
                 _laserPos[0] = hands == Hand.Left ? leftHand.location : rightHand.location;
+
+                hitTests[0].transform.position = _laserPos[0];
+                hitTests[0].SetStartAndEndPoints(Vector3.zero, _laserDir[0]*500f);
             }
 
             // If hits a sample, apply damage
             RaycastHit hit;
             
+            if (hands != Hand.Both)
+            {
+                _laserDir[1] = Vector3.zero;
+                _laserPos[1] = Vector3.zero;
+                
+            }
+            
             // Iterates over the number of lasers currently active
             for (int i = 0; i < _laserDir.Length; i++)
             {
-                
+
+
                 Ray ray = new Ray(_laserPos[i], _laserDir[i]);
                 Debug.DrawLine(_laserPos[i], _laserDir[i] * 500f);
                 
@@ -164,7 +183,7 @@ public class Digging : MonoBehaviour
                 // physics layer so that this will either hit a resource or nothing
                 if (Physics.Raycast(ray, out hit, float.MaxValue, mask))
                 {
-                    hitTests[i].transform.position = hit.point;
+                    hitTests[i].SetStartAndEndPoints(Vector3.zero, hit.point);
 
                     // If there are no active samples or this is hitting a different sample then the 
                     // currently active one then it gets the relevant component. This prevents 
@@ -217,9 +236,6 @@ public class Digging : MonoBehaviour
                 rightHand.location = handPosition;
                 rightHand.orientation = handOrientation;
             }
-            Color colour = hands == (isLeft ? Hand.Left : Hand.Right) || hands == Hand.Both ? Color.green : Color.red;
-            Debug.DrawLine(handPosition, handPosition + (handOrientation * 500), colour);
-
 
         }
         else
@@ -236,8 +252,12 @@ public class Digging : MonoBehaviour
         Debug.LogError("Toggle Beam: " + hand.ToString() +(newActive?"On": "Off"));
         hands = hand;
         active = newActive;
-        
-        
+        combineTest.gameObject.SetActive(newActive);
+        for (int i = 0; i < hitTests.Length; i++)
+        {
+            hitTests[i].gameObject.SetActive(newActive);
+        }
+
     }
 
 }

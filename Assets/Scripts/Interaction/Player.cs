@@ -120,10 +120,22 @@ public class Player : MonoBehaviour
 
 
 
+    public bool SpendPoints(int price)
+    {
+        bool success = points >= price;
+        if (success)
+        {
+            points -= price;
+        }
+        
+        uiController.UpdateScore(points);
+        return success;
+    }
 
     void AddScore(int deltaScore)
     {
         points += deltaScore;
+        uiController.UpdateScore(points);
     }
 
 

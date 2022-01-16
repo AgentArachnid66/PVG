@@ -94,7 +94,7 @@ public class SpeechEngine : MonoBehaviour
         // Debug to Pause the editor
         if (word.Contains("break"))
         {
-            Debug.Break();
+           // Debug.Break();
         }
         else if (word.Contains("quit game"))
         {
