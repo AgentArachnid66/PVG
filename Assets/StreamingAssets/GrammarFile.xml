@@ -38,6 +38,12 @@
       <item>
       <ruleref uri="#generalTurn"/>
     </item>
+      <item>
+        <ruleref uri="#turnThe"/>
+      </item>
+      <item>
+        <ruleref uri="#generalTurnThe"/>
+      </item>
       <item>break</item>
       <item>quit game</item>
     </one-of>
@@ -53,18 +59,19 @@
   </rule>
 
   <rule id="thruster">
-    <one-of>
-      <item>
+    <one-of><item>
         <one-of>
-          <item>thruster</item>
-          <item>engine</item>
+          <item>thrusters</item>
+          <item>engines</item>
+          <item>boosters</item>
         </one-of>
         <tag>out="pluralThrusters";</tag>
       </item>
       <item>
         <one-of>
-          <item>thrusters</item>
-          <item>engines</item>
+          <item>thruster</item>
+          <item>engine</item>
+          <item>booster</item>
         </one-of>
         <tag>out="singleThruster";</tag>
       </item>
@@ -84,8 +91,8 @@
       <item>inventory</item>
       <item>market</item>
       <item>buy screen</item>
-      <item>sell screen</item>
     </one-of>
+    <tag>out ="inventory";</tag>
   </rule>
 
   <rule id="mode">
@@ -191,7 +198,20 @@
     <ruleref uri="#toggle"/>
     <ruleref uri="#mode"/>
   </rule>
+  
+  <rule id="turnThe">
+    <item>turn</item>
+    <ruleref uri="#toggle"/>
+    <item>the</item>
+    <ruleref uri="#hand"/>
+    <ruleref uri="#mode"/>
+  </rule>
 
-
-
+  <rule id="generalTurnThe">
+    <item>turn</item>
+    <ruleref uri="#toggle"/>
+    <item>the</item>
+    <ruleref uri="#mode"/>
+  </rule>
+  
 </grammar>

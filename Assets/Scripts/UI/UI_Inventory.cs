@@ -23,6 +23,8 @@ public class UI_Inventory : MonoBehaviour
     // The active inventory slot
     private int _activeIndex;
 
+    public InventoryData activeSlot;
+    
     // Array of slots that holds the UI elements
     public UI_InventorySlot[] slots = new UI_InventorySlot[5];
 
@@ -55,10 +57,10 @@ public class UI_Inventory : MonoBehaviour
     {
         _activeIndex = index;
         Debug.Log("Set Active Index: " + index.ToString());
-        InventoryData slotData = GetInventorySlot(index);
-        adjustStack.horizontalSteps = slotData.amount;
+        activeSlot = GetInventorySlot(_activeIndex);
+        adjustStack.horizontalSteps = activeSlot.amount;
 
-        UpdateSellObject(slotData);
+        UpdateSellObject(activeSlot);
         adjustStack.HorizontalSliderPercent = 1f;
         
         UpdateSlider(0);
@@ -94,9 +96,7 @@ public class UI_Inventory : MonoBehaviour
         slots[index].UpdateSlot(GetMarketData(GetInventorySlot(index).item));
         UpdateSlider(0);
     }
-
-
-
+    
     void UpdateSellObject(InventoryData data)
     {
         sellObjectSeed.inventoryData = data;

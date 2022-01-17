@@ -126,7 +126,7 @@ public class SpeechEngine : MonoBehaviour
 
             customEvents.switchMode.Invoke(mode, hand);
 
-            Debug.LogError("Switched To: " + mode.ToString() + "On The: " + hand.ToString() + " Hand");
+            Debug.LogError("Switched To: " + mode.ToString() + " On The: " + hand.ToString() + " Hand");
         }
     }
 

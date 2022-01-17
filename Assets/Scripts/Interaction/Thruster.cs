@@ -53,6 +53,18 @@ public class Thruster : MonoBehaviour
     {
         m_Rigidbody = GetComponent<Rigidbody>();
         _originalPos = transform.position;
+        
+        leftControl._horizontalSlideEvent.AddListener((result =>
+                {
+                    _leftThrusterUI.text = Mathf.RoundToInt(result * 100f).ToString() + "%";
+                }
+                ));
+        
+        rightControl._horizontalSlideEvent.AddListener((result =>
+                {
+                    _rightThrusterUI.text = Mathf.RoundToInt(result * 100f).ToString() + "%";
+                }
+            ));
     }
 
     public void UpdateVector(bool isClockwise)

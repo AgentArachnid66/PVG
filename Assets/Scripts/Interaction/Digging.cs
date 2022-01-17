@@ -10,8 +10,10 @@ public class Digging : MonoBehaviour
 {
     // How quickly a sample is taken
     [SerializeField] private float _cooldown = 0.25f;
+
     // If a sample can be taken
     [SerializeField] private bool _isInCooldown;
+
     // Which layer the laser should test for a sample
     [SerializeField] private LayerMask mask;
     /*
@@ -30,15 +32,15 @@ public class Digging : MonoBehaviour
     // Objects to display this code working in the demo
     public VolumetricLineBehavior combineTest;
     public VolumetricLineBehavior[] hitTests = new VolumetricLineBehavior[2];
-    
+
 
     // Whether or not this code is active
     public bool active;
 
-    
+
     // The transform of the origin
     public Transform rig;
-    
+
     // The threshold value that if the player exceeds, the laser requires a cooldown before it can be used again
     public float maxBurnout;
 
@@ -49,7 +51,7 @@ public class Digging : MonoBehaviour
     // The vector between the hands, to measure the distance between them and to get the orientation
     private Vector3 _handDist;
 
-    
+
     // Direction and Position of the lasers
     private Vector3[] _laserDir = new Vector3[2];
     private Vector3[] _laserPos = new Vector3[2];
@@ -67,7 +69,7 @@ public class Digging : MonoBehaviour
     // Currently Active Sample
     private Sample activeSample;
 
-   
+
     private void Start()
     {
         CustomEvents.CustomEventsInstance.UpdateLaser.AddListener(UpdateBeamInfo);
@@ -90,14 +92,12 @@ public class Digging : MonoBehaviour
                 // Else the hands are in an incorrect orientation.
                 //Vector3 pointDist = (rightHand.location + (rightHand.orientation * debugLineLength)) - (leftHand.location +
                 //    (leftHand.orientation * debugLineLength));
-                
-                
+
+
                 // If the dot is close to -1 then the hands are facing each other
-                _combine = Vector3.Dot(leftHand.orientation.normalized, rightHand.orientation.normalized) <= -0.75;// && pointDist.magnitude < handDist.magnitude;
+                _combine = Vector3.Dot(leftHand.orientation.normalized, rightHand.orientation.normalized) <=
+                           -0.75; // && pointDist.magnitude < handDist.magnitude;
                 
-
-
-               
                 combineTest.gameObject.SetActive(_combine);
                 if (_combine)
                 {
@@ -112,14 +112,13 @@ public class Digging : MonoBehaviour
                     // Directs the laser downwards as otherwise it wouldn't hit anything
                     // as the hands are always above the rig
                     _laserDir[0].y *= -1;
-                    
+
                     // Starting point of the laser is the midpoint between the two 
                     // position vectors
                     _laserPos[0] = (leftHand.location + rightHand.location) / 2;
-                    
+
                     // Finally Update the lasers VFX
-                    combineTest.transform.position = _laserPos[0];
-                    combineTest.SetStartAndEndPoints(Vector3.zero, _laserDir[0]*500f);
+                    combineTest.SetStartAndEndPoints(_laserPos[0], _laserPos[0]+_laserDir[0]*500f);
 
                     foreach (VolumetricLineBehavior hitTest in hitTests)
                     {
@@ -136,20 +135,20 @@ public class Digging : MonoBehaviour
 
                         _laserDir[i] = i == 0 ? leftHand.orientation : rightHand.orientation;
                         _laserPos[i] = i == 0 ? leftHand.location : rightHand.location;
-                        
+
                         hitTests[i].transform.position = _laserPos[i];
-                        hitTests[i].SetStartAndEndPoints(Vector3.zero, _laserDir[i]*500f);
+                        hitTests[i].SetStartAndEndPoints(Vector3.zero, _laserDir[i] * 500f);
                         hitTests[i].gameObject.SetActive(true);
                     }
                 }
             }
-            
+
             // If it's only individual hands that are active
             else if (hands == Hand.Left || hands == Hand.Right)
             {
 
                 _handDist = hands == Hand.Left ? leftHand.location : rightHand.location;
-                
+
                 // In the case it's individual hands, the output is constant
                 currOutput = maxBurnout / 2;
 
@@ -158,19 +157,22 @@ public class Digging : MonoBehaviour
                 _laserPos[0] = hands == Hand.Left ? leftHand.location : rightHand.location;
 
                 hitTests[0].transform.position = _laserPos[0];
-                hitTests[0].SetStartAndEndPoints(Vector3.zero, _laserDir[0]*500f);
+                hitTests[0].SetStartAndEndPoints(Vector3.zero, _laserDir[0] * 500f);
+
+                combineTest.gameObject.SetActive(false);
+                hitTests[1].gameObject.SetActive(false);
             }
 
             // If hits a sample, apply damage
             RaycastHit hit;
-            
+
             if (hands != Hand.Both)
             {
                 _laserDir[1] = Vector3.zero;
                 _laserPos[1] = Vector3.zero;
-                
+
             }
-            
+
             // Iterates over the number of lasers currently active
             for (int i = 0; i < _laserDir.Length; i++)
             {
@@ -178,17 +180,18 @@ public class Digging : MonoBehaviour
 
                 Ray ray = new Ray(_laserPos[i], _laserDir[i]);
                 Debug.DrawLine(_laserPos[i], _laserDir[i] * 500f);
-                
+
                 // Casts a ray using the laser information. The resources are on a separate 
                 // physics layer so that this will either hit a resource or nothing
                 if (Physics.Raycast(ray, out hit, float.MaxValue, mask))
                 {
-                    hitTests[i].SetStartAndEndPoints(Vector3.zero, hit.point);
+                    hitTests[i].SetStartAndEndPoints(Vector3.zero, hit.point-rig.position);
 
                     // If there are no active samples or this is hitting a different sample then the 
                     // currently active one then it gets the relevant component. This prevents 
                     // it from calling GetComponent except when it needs to.
-                    if (activeSample == null || activeSample.gameObject.GetInstanceID() != hit.collider.gameObject.GetInstanceID())
+                    if (activeSample == null || activeSample.gameObject.GetInstanceID() !=
+                        hit.collider.gameObject.GetInstanceID())
                     {
                         activeSample = hit.collider.gameObject.GetComponent<Sample>();
                     }
@@ -201,6 +204,7 @@ public class Digging : MonoBehaviour
                         {
                             activeSample = null;
                         }
+
                         StartCoroutine(ResetCooldown());
                     }
 
@@ -212,7 +216,7 @@ public class Digging : MonoBehaviour
             }
         }
     }
-    
+
 
     private IEnumerator ResetCooldown()
     {
@@ -220,7 +224,7 @@ public class Digging : MonoBehaviour
         _isInCooldown = false;
     }
 
-    void UpdateBeamInfo(bool isLeft, Vector3 handPosition , Vector3 handOrientation)
+    void UpdateBeamInfo(bool isLeft, Vector3 handPosition, Vector3 handOrientation)
     {
         if (hands != Hand.None)
         {
@@ -249,16 +253,23 @@ public class Digging : MonoBehaviour
 
     public void ToggleBeam(Hand hand, bool newActive)
     {
-        Debug.LogError("Toggle Beam: " + hand.ToString() +(newActive?"On": "Off"));
-        hands = hand;
+        Debug.LogError("Toggle Beam: " + hand.ToString() + (newActive ? "On" : "Off"));
+
+
         active = newActive;
+        hands = hand;
+
         combineTest.gameObject.SetActive(newActive);
         for (int i = 0; i < hitTests.Length; i++)
         {
             hitTests[i].gameObject.SetActive(newActive);
         }
-
     }
+
+
+
+
+
 
 }
 

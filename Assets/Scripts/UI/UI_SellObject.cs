@@ -20,6 +20,7 @@ public class UI_SellObject : MonoBehaviour
         {
             Debug.LogError("Entered Market");
             market.DepositSample(inventoryData);
+            inventoryData = new InventoryData();
             gameObject.SetActive(false);
         }
     }

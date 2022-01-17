@@ -70,14 +70,14 @@ public class Player : MonoBehaviour
                 
                 // Enable the thrusters
                 thruster.ToggleThrusters(true);
-                
+
                 break;
-            
-            
+                
             case Mode.Hand:
                 // Turn off everything
-                dig.ToggleBeam(global::Hand.None, false);
+                dig.ToggleBeam(hand, false);
                 thruster.ToggleThrusters(false);
+                
                 uiController.ToggleMarketUI(hand, false);
                 uiController.ToggleThrusterUI(hand, false);
                 break;
@@ -115,6 +115,8 @@ public class Player : MonoBehaviour
                 break;
         }
     }
+
+
 
     #endregion
 
@@ -256,6 +258,7 @@ public class Player : MonoBehaviour
         {
             customEvents.UpdateInventoryIndex.Invoke(index);
             inventory[index].amount -= amount;
+            inventory[index].item = inventory[index].amount > 0 ? inventory[index].item : 0;
             return true;
         }
 
