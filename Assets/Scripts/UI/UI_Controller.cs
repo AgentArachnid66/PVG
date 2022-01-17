@@ -18,11 +18,14 @@ public class UI_Controller : MonoBehaviour
     
     void Start()
     {
+        // Immediately turn off all UI that are active
         ToggleMarketUI(Hand.Both, false);
         ToggleThrusterUI(Hand.Both, false);
     }
     
     #region Upgrade Screen
+    
+    // This is where I will keep the Upgrades
 
 
 
@@ -44,11 +47,15 @@ public class UI_Controller : MonoBehaviour
     
     #region UI Events
 
+    // This is where I put the UI related functionality
+    
+    // Updates the Points UI
     public void UpdateScore(int newScore)
     {
         scoreDisplay.text = "Current Points: " + newScore.ToString();
     }
     
+    // Toggles the Thruster UI based on which hand and if it's closing or opening
     public void ToggleThrusterUI(Hand hand, bool active)
     {
         Debug.Log("Thruster UI is" +active.ToString() + " " +hand.ToString());
@@ -72,6 +79,7 @@ public class UI_Controller : MonoBehaviour
         }
     }
 
+    // Toggles the Market UI based on which hand and if it's closing or opening
     public void ToggleMarketUI(Hand hand, bool active)
     {
         Debug.Log("Market UI is" +active.ToString() + " " +hand.ToString());

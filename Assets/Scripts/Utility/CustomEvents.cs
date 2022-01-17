@@ -52,6 +52,9 @@ public class CustomEvents : MonoBehaviour
 
 #region Custom Event Types  
 
+// In order to transmit the required data via Events, I had to make a few custom event type
+
+
 [System.Serializable]
 public class UnityEventBool : UnityEvent<bool>
 {

@@ -46,12 +46,9 @@ public class Player : MonoBehaviour
 
     #region Mode Mechanics
 
-    /// <summary>
-    /// Switches the given hand's active mode. 
-    /// It's independent so that either hand can be given a different task depending on the player's decisions
-    /// </summary>
-    /// <param name="mode"></param>
-    /// <param name="hand"></param>
+
+    // Switches the given hand's active mode. 
+    // It's independent so that either hand can be given a different task depending on the player's decisions
     void SwitchMode(Mode mode, Hand hand)
     {
         currentMode = mode;
@@ -143,11 +140,9 @@ public class Player : MonoBehaviour
 
     #region Inventory
 
-    /// <summary>
-    /// Gets the first available index for an item if there isn't a stack already in the inventory. If there is a stack then it returns that
-    /// </summary>
-    /// <param name="data"></param>
-    /// <returns>The first Index of the item if there is one available</returns>
+
+    // Gets the first available index for an item if there isn't a stack already in the inventory.
+    // If there is a stack then it returns that
     int GetItemIndex(CollectableData data)
     {
         int index = -1;
@@ -176,11 +171,8 @@ public class Player : MonoBehaviour
         return index;
     }
 
-    /// <summary>
-    /// Using the item id, this will get an index for the inventory.
-    /// </summary>
-    /// <param name="id"></param>
-    /// <returns>Gets the first available index for the item</returns>
+    
+    // Using the item id, this will get an index for the inventory.
     public int GetItemIndexFromID(int id)
     {
         SampleData info;
@@ -189,7 +181,7 @@ public class Player : MonoBehaviour
 
     }
     
-    
+    // Given an ItemID, adds a single instance of it to the inventory
     public bool AddItemIDToInventory(int itemID)
     {
         if (market.samples.TryGetValue(itemID, out SampleData dataOut)){
@@ -204,6 +196,7 @@ public class Player : MonoBehaviour
     }
 
 
+    // Given some CollectableData, add it to the inventory
     public bool AddItemToInventory(CollectableData data)
     {
         return AddToInventory(data, GetItemIndex(data));
@@ -269,8 +262,6 @@ public class Player : MonoBehaviour
     }
 
 
-
-    
     #endregion
 
 

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[ExecuteInEditMode]
+
 public class Thruster : MonoBehaviour
 {
  
@@ -44,9 +44,15 @@ public class Thruster : MonoBehaviour
     // Current dot product
     private float _dot;
 
+    // Variables required to keep the drone a constant distance from the ground
+    // and to teleport it back to where it came from if it goes beyond a certain distance
+    // Terrain of the scene
     public Terrain terrain;
+    // The original world position of the drone
     private Vector3 _originalPos;
+    // The max distance away from _originalPos that the drone can go
     private float _distanceThreshold = 250f;
+    // How far off the ground the drone hovers
     private float _floatingOffset = 5f;
 
     void Start()
@@ -54,6 +60,7 @@ public class Thruster : MonoBehaviour
         m_Rigidbody = GetComponent<Rigidbody>();
         _originalPos = transform.position;
         
+        // When the slider has a horizontal event, update the UI
         leftControl._horizontalSlideEvent.AddListener((result =>
                 {
                     _leftThrusterUI.text = Mathf.RoundToInt(result * 100f).ToString() + "%";
@@ -69,6 +76,7 @@ public class Thruster : MonoBehaviour
 
     public void UpdateVector(bool isClockwise)
     {
+        // Updates the Thruster values
         UpdateThrusterValues(isClockwise ? leftControl.HorizontalSliderValue : rightControl.HorizontalSliderValue,
             isClockwise);
     }
@@ -94,8 +102,13 @@ public class Thruster : MonoBehaviour
 
     public void ToggleThrusters(bool activateThrusters)
     {
+        // Toggles the Thruster On/Off
+        
         Debug.Log("Thrusters are now " +(activateThrusters? "Active":"Inactive"));
         _activate = activateThrusters;
+        
+        // Stretch Goal 
+        // Get the script to be able to handle turning on and off independent thrusters
     }
 
     // Retrieves the relevant values in use for the thrusters
@@ -117,13 +130,11 @@ public class Thruster : MonoBehaviour
             if (clockwise)
             {
                 _clockwiseVector = Quaternion.Euler(0,Mathf.Lerp(-90, 90, rotationPower) , 0) * m_Rigidbody.transform.forward * rotationPower;
-                //Debug.DrawLine(m_Rigidbody.transform.position, m_Rigidbody.transform.position + clockwiseVector * 500);
                 _leftThrusterUI.text = Mathf.RoundToInt(leftControl.HorizontalSliderValue * 100f).ToString() + "%";
             }
             else
             {
                 _anticlockwiseVector = Quaternion.Euler(0, Mathf.Lerp(-90, 90, 1-rotationPower), 0) * m_Rigidbody.transform.forward * rotationPower;
-                Debug.DrawLine(m_Rigidbody.transform.position, m_Rigidbody.transform.position + _anticlockwiseVector * 500);
                 _rightThrusterUI.text = Mathf.RoundToInt(rightControl.HorizontalSliderValue * 100f).ToString() + "%";
             }
 
@@ -159,7 +170,9 @@ public class Thruster : MonoBehaviour
             // to stop the drone
             _currSum = _currSum <= 0.05 * maxPower ? 0f : _currSum;
 
+            // Target Position
             Vector3 targetPos = m_Rigidbody.position + (m_Rigidbody.transform.forward * _currSum);
+            // Calculate the height from the Terrain and the offset
             float height = terrain.SampleHeight(targetPos);
             targetPos.y = height + _floatingOffset;
             Debug.Log($"Target Position {targetPos}");
